@@ -1,10 +1,10 @@
 Sample configuration files for:
 
-SystemD: hbcucoind.service
-Upstart: hbcucoind.conf
-OpenRC:  hbcucoind.openrc
-         hbcucoind.openrcconf
-CentOS:  hbcucoind.init
+SystemD: hbcurd.service
+Upstart: hbcurd.conf
+OpenRC:  hbcurd.openrc
+         hbcurd.openrcconf
+CentOS:  hbcurd.init
 
 have been made available to assist packagers in creating node packages here.
 

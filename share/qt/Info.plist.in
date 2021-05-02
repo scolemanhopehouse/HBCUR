@@ -17,7 +17,7 @@
   <string>APPL</string>
 
   <key>CFBundleGetInfoString</key>
-  <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@, Copyright © 2009-@COPYRIGHT_YEAR@ The Bitcoin Core developers, 2014-@COPYRIGHT_YEAR@ The Dash Core developers, 2015-@COPYRIGHT_YEAR@ The hbcucoin Core developers, @COPYRIGHT_YEAR@ The hbcucoin developers</string>
+  <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@, Copyright © 2009-@COPYRIGHT_YEAR@ The Bitcoin Core developers, 2014-@COPYRIGHT_YEAR@ The Dash Core developers, 2015-@COPYRIGHT_YEAR@ The PIVX Core developers, 2017-@COPYRIGHT_YEAR@ The hbcur Core developers</string>
 
   <key>CFBundleShortVersionString</key>
   <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@</string>
@@ -29,16 +29,10 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>hbcucoin-Qt</string>
-  
-  <key>CFBundleName</key>
-  <string>hbcucoin-Qt</string>
-
-  <key>LSHasLocalizedDisplayName</key>
-  <true/>
+  <string>hbcur-Qt</string>
 
   <key>CFBundleIdentifier</key>
-  <string>io.hbcucoin.hbcucoin-Qt</string>
+  <string>io.hbcur.hbcur-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -46,10 +40,10 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>io.hbcucoin.hbcucoinPayment</string>
+      <string>io.hbcur.hbcurPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>hbcucoin</string>
+        <string>hbcur</string>
       </array>
     </dict>
   </array>
@@ -58,9 +52,9 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>io.hbcucoin.paymentrequest</string>
+      <string>io.hbcur.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>hbcucoin payment request</string>
+      <string>hbcur payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
@@ -68,10 +62,10 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-hbcucoin-payment-request</string>
+        <string>application/x-hbcur-payment-request</string>
         <key>public.filename-extension</key>
         <array>
-          <string>hbcucoinpaymentrequest</string>
+          <string>hbcurpaymentrequest</string>
         </array>
       </dict>
     </dict>
@@ -84,7 +78,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>io.hbcucoin.paymentrequest</string>
+        <string>io.hbcur.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

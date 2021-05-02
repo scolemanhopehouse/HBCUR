@@ -1,7 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2016-2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -76,8 +74,6 @@ bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash
         LogPrintf("*** null data \n");
         return false;
     }
-    case TX_ZEROCOINMINT:
-        return false;
     case TX_PUBKEY:
         keyID = CPubKey(vSolutions[0]).GetID();
         if(!Sign1(keyID, keystore, hash, nHashType, scriptSigRet))
@@ -104,7 +100,6 @@ bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash
         return keystore.GetCScript(uint160(vSolutions[0]), scriptSigRet);
 
     case TX_MULTISIG:
-    case TX_MULTISIG_DATA:
         scriptSigRet << OP_0; // workaround CHECKMULTISIG bug
         return (SignN(vSolutions, keystore, hash, nHashType, scriptSigRet));
     }
@@ -195,7 +190,7 @@ static CScript CombineMultisig(const CScript& scriptPubKey, const CTransaction& 
             if (sigs.count(pubkey))
                 continue; // Already got a sig for this pubkey
 
-            if (TransactionSignatureChecker(&txTo, nIn).CheckSig(sig, pubkey, scriptPubKey, STANDARD_SCRIPT_VERIFY_FLAGS))
+            if (TransactionSignatureChecker(&txTo, nIn).CheckSig(sig, pubkey, scriptPubKey))
             {
                 sigs[pubkey] = sig;
                 break;
@@ -228,7 +223,6 @@ static CScript CombineSignatures(const CScript& scriptPubKey, const CTransaction
     {
     case TX_NONSTANDARD:
     case TX_NULL_DATA:
-    case TX_ZEROCOINMINT:
         // Don't know anything about this, assume bigger one is correct:
         if (sigs1.size() >= sigs2.size())
             return PushAll(sigs1);
@@ -260,7 +254,6 @@ static CScript CombineSignatures(const CScript& scriptPubKey, const CTransaction
             return result;
         }
     case TX_MULTISIG:
-    case TX_MULTISIG_DATA:
         return CombineMultisig(scriptPubKey, txTo, nIn, vSolutions, sigs1, sigs2);
     }
 

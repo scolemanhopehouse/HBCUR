@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017 The xx developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -39,6 +38,7 @@ public:
     void setModel(WalletModel* model);
     void updateDialogLabels();
 
+
     // static because also called from sendcoinsdialog
     static void updateLabels(WalletModel*, QDialog*);
     static QString getPriorityLabel(double dPriority, double mempoolEstimatePriority);
@@ -69,7 +69,8 @@ private:
         COLUMN_AMOUNT,
         COLUMN_LABEL,
         COLUMN_ADDRESS,
-        COLUMN_TYPE,
+		COLUMN_TYPE,
+        COLUMN_OBFUSCATION_ROUNDS,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
         COLUMN_PRIORITY,
@@ -125,7 +126,7 @@ private slots:
     void buttonBoxClicked(QAbstractButton*);
     void buttonSelectAllClicked();
     void buttonToggleLockClicked();
-//    void updateLabelLocked();
+    void updateLabelLocked();
 };
 
 #endif // BITCOIN_QT_COINCONTROLDIALOG_H

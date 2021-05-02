@@ -1,7 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2012-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
+// Copyright (c) 2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,7 +14,6 @@
 
 class CBasicKeyStore;
 class CWallet;
-class CBlockIndex;
 class uint256;
 
 /** General change type (added, updated, removed). */
@@ -103,13 +100,7 @@ public:
     boost::signals2::signal<void(const std::string& title, int nProgress)> ShowProgress;
 
     /** New block has been accepted */
-    boost::signals2::signal<void(bool, const CBlockIndex *pBlockIndex)> NotifyBlockTip;
-
-    /** New block has been accepted and is over a certain size */
-    boost::signals2::signal<void(int size, const uint256& hash)> NotifyBlockSize;
-
-    /** Banlist did change. */
-    boost::signals2::signal<void (void)> BannedListChanged;
+    boost::signals2::signal<void(const uint256& hash)> NotifyBlockTip;
 };
 
 extern CClientUIInterface uiInterface;

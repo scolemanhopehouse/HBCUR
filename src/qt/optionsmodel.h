@@ -1,6 +1,4 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2017-2019 The hbcucoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -45,15 +43,10 @@ public:
         ThreadsScriptVerif,  // int
         DatabaseCache,       // int
         SpendZeroConfChange, // bool
-        ZeromintEnable,      // bool
-        ZeromintPercentage,  // int
-        ZeromintPrefDenom,   // int
-        HideZeroBalances,    // bool
-        HideOrphans,         // bool
-        AnonymizehbcucoinAmount, //int
-//      ShowMasternodesTab,  // bool
+        ObfuscationRounds,   // int
+        AnonymizehbcurAmount, //int
+        ShowMasternodesTab,  // bool
         Listen,              // bool
-        StakeSplitThreshold, // int
         OptionIDRowCount,
     };
 
@@ -65,8 +58,6 @@ public:
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
     /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
     void setDisplayUnit(const QVariant& value);
-    /* Update StakeSplitThreshold's value in wallet */
-    void setStakeSplitThreshold(int value);
 
     /* Explicit getters */
     bool getMinimizeToTray() { return fMinimizeToTray; }
@@ -90,8 +81,6 @@ private:
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
-    bool fHideZeroBalances;
-    bool fHideOrphans;
     /* settings that were overriden by command-line */
     QString strOverriddenByCommandLine;
 
@@ -100,13 +89,9 @@ private:
 
 signals:
     void displayUnitChanged(int unit);
-    void zeromintEnableChanged(bool);
-    void zeromintPercentageChanged(int);
-    void preferredDenomChanged(int);
-    void anonymizehbcucoinAmountChanged(int);
+    void obfuscationRoundsChanged(int);
+    void anonymizehbcurAmountChanged(int);
     void coinControlFeaturesChanged(bool);
-    void hideZeroBalancesChanged(bool);
-    void hideOrphansChanged(bool);
 };
 
 #endif // BITCOIN_QT_OPTIONSMODEL_H

@@ -1,6 +1,6 @@
 Mac OS X Build Instructions and Notes
 ====================================
-This guide will show you how to build hbcucoind (headless client) for OSX.
+This guide will show you how to build hbcurd (headless client) for OSX.
 
 Notes
 -----
@@ -38,31 +38,26 @@ Instructions: Homebrew
 
 #### Install dependencies using Homebrew
 
-        brew install autoconf automake berkeley-db4 libtool boost miniupnpc openssl pkg-config protobuf qt5 zmq libevent
+        brew install autoconf automake berkeley-db4 libtool boost miniupnpc openssl pkg-config protobuf qt5
 
-### Building `hbcucoind`
+### Building `hbcurd`
 
 1. Clone the github tree to get the source code and go into the directory.
 
-        git clone https://github.com/hbcucoin-project/hbcucoin.git
-        cd hbcucoin
+        git clone https://FIXME_EATBATTERYS
+        cd hbcur
 
-2.  Make the Homebrew OpenSSL headers visible to the configure script  (do ```brew info openssl``` to find out why this is necessary, or if you use Homebrew with installation folders different from the default).
-
-        export LDFLAGS+=-L/usr/local/opt/openssl/lib
-        export CPPFLAGS+=-I/usr/local/opt/openssl/include
-
-3.  Build hbcucoind:
+2.  Build hbcurd:
 
         ./autogen.sh
         ./configure --with-gui=qt5
         make
 
-4.  It is also a good idea to build and run the unit tests:
+3.  It is also a good idea to build and run the unit tests:
 
         make check
 
-5.  (Optional) You can also install hbcucoind to your path:
+4.  (Optional) You can also install hbcurd to your path:
 
         make install
 
@@ -74,7 +69,7 @@ Download Qt Creator from http://www.qt.io/download/. Download the "community edi
 1. Make sure you installed everything through homebrew mentioned above
 2. Do a proper ./configure --with-gui=qt5 --enable-debug
 3. In Qt Creator do "New Project" -> Import Project -> Import Existing Project
-4. Enter "hbcucoin-qt" as project name, enter src/qt as location
+4. Enter "hbcur-qt" as project name, enter src/qt as location
 5. Leave the file selection as it is
 6. Confirm the "summary page"
 7. In the "Projects" tab select "Manage Kits..."
@@ -84,11 +79,11 @@ Download Qt Creator from http://www.qt.io/download/. Download the "community edi
 
 Creating a release build
 ------------------------
-You can ignore this section if you are building `hbcucoind` for your own use.
+You can ignore this section if you are building `hbcurd` for your own use.
 
-hbcucoind/hbcucoin-cli binaries are not included in the hbcucoin-Qt.app bundle.
+hbcurd/hbcur-cli binaries are not included in the hbcur-Qt.app bundle.
 
-If you are building `hbcucoind` or `hbcucoin-qt` for others, your build machine should be set up
+If you are building `hbcurd` or `hbcur-qt` for others, your build machine should be set up
 as follows for maximum compatibility:
 
 All dependencies should be compiled with these flags:
@@ -97,30 +92,30 @@ All dependencies should be compiled with these flags:
  -arch x86_64
  -isysroot $(xcode-select --print-path)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
 
-Once dependencies are compiled, see release-process.md for how the hbcucoin-Qt.app
+Once dependencies are compiled, see release-process.md for how the hbcur-Qt.app
 bundle is packaged and signed to create the .dmg disk image that is distributed.
 
 Running
 -------
 
-It's now available at `./hbcucoind`, provided that you are still in the `src`
+It's now available at `./hbcurd`, provided that you are still in the `src`
 directory. We have to first create the RPC configuration file, though.
 
-Run `./hbcucoind` to get the filename where it should be put, or just try these
+Run `./hbcurd` to get the filename where it should be put, or just try these
 commands:
 
-    echo -e "rpcuser=hbcucoinrpc\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "/Users/${USER}/Library/Application Support/hbcucoin/hbcucoin.conf"
-    chmod 600 "/Users/${USER}/Library/Application Support/hbcucoin/hbcucoin.conf"
+    echo -e "rpcuser=hbcurrpc\nrpcpassword=$(xxd -l 16 -p /dev/urandom)" > "/Users/${USER}/Library/Application Support/hbcur/hbcur.conf"
+    chmod 600 "/Users/${USER}/Library/Application Support/hbcur/hbcur.conf"
 
 The next time you run it, it will start downloading the blockchain, but it won't
 output anything while it's doing this. This process may take several hours;
 you can monitor its process by looking at the debug.log file, like this:
 
-    tail -f $HOME/Library/Application\ Support/hbcucoin/debug.log
+    tail -f $HOME/Library/Application\ Support/hbcur/debug.log
 
 Other commands:
 -------
 
-    ./hbcucoind -daemon # to start the hbcucoin daemon.
-    ./hbcucoin-cli --help  # for a list of command-line options.
-    ./hbcucoin-cli help    # When the daemon is running, to get a list of RPC commands
+    ./hbcurd -daemon # to start the hbcur daemon.
+    ./hbcur-cli --help  # for a list of command-line options.
+    ./hbcur-cli help    # When the daemon is running, to get a list of RPC commands

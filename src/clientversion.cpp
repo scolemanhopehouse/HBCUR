@@ -1,6 +1,4 @@
 // Copyright (c) 2012-2014 The Bitcoin developers
-// Copyright (c) 2016-2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,10 +10,10 @@
 
 /**
  * Name of client reported in the 'version' message. Report the same name
- * for both hbcucoind and hbcucoin-qt, to make it harder for attackers to
+ * for both hbcurd and hbcur-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("hbcucoin");
+const std::string CLIENT_NAME("hbcur Core");
 
 /**
  * Client version number
@@ -41,10 +39,11 @@ const std::string CLIENT_NAME("hbcucoin");
 
 //! First, include build.h if requested
 #ifdef HAVE_BUILD_INFO
-#include "obj/build.h"
+#include "build.h"
 #endif
 
 //! git will put "#define GIT_ARCHIVE 1" on the next line inside archives.
+#define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
 #define GIT_COMMIT_ID "cbcb549"
 #define GIT_COMMIT_DATE "Tue, 9 Feb 2016 16:54:57 -0500"

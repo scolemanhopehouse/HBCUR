@@ -1,11 +1,4 @@
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
-#ifndef hbcucoin_UINT512_H
-#define hbcucoin_UINT512_H
-
+#pragma once
 #include "arith_uint256.h"
 #include "uint256.h"
 
@@ -42,5 +35,3 @@ inline uint512 uint512S(const char* str)
     rv.SetHex(str);
     return rv;
 }
-
-#endif // hbcucoin_UINT512_H

@@ -1,6 +1,4 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2017-2019 The hbcucoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -88,25 +86,15 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     typeWidget->addItem(tr("Most Common"), TransactionFilterProxy::COMMON_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) | TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
     typeWidget->addItem(tr("Sent to"), TransactionFilterProxy::TYPE(TransactionRecord::SendToAddress) | TransactionFilterProxy::TYPE(TransactionRecord::SendToOther));
-
-/* Obsolete Obfuscation entries. Remove once the corresponding TYPES are removed:
- * 
     typeWidget->addItem(tr("Obfuscated"), TransactionFilterProxy::TYPE(TransactionRecord::Obfuscated));
     typeWidget->addItem(tr("Obfuscation Make Collateral Inputs"), TransactionFilterProxy::TYPE(TransactionRecord::ObfuscationMakeCollaterals));
     typeWidget->addItem(tr("Obfuscation Create Denominations"), TransactionFilterProxy::TYPE(TransactionRecord::ObfuscationCreateDenominations));
     typeWidget->addItem(tr("Obfuscation Denominate"), TransactionFilterProxy::TYPE(TransactionRecord::ObfuscationDenominate));
     typeWidget->addItem(tr("Obfuscation Collateral Payment"), TransactionFilterProxy::TYPE(TransactionRecord::ObfuscationCollateralPayment));
- */
-
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
-    typeWidget->addItem(tr("Minted"), TransactionFilterProxy::TYPE(TransactionRecord::StakeMint) | TransactionFilterProxy::TYPE(TransactionRecord::StakeZECA));
+    typeWidget->addItem(tr("Minted"), TransactionFilterProxy::TYPE(TransactionRecord::StakeMint));
     typeWidget->addItem(tr("Masternode Reward"), TransactionFilterProxy::TYPE(TransactionRecord::MNReward));
-    typeWidget->addItem(tr("Received hbcucoin from zECA"), TransactionFilterProxy::TYPE(TransactionRecord::RecvFromZerocoinSpend));
-    typeWidget->addItem(tr("Zerocoin Mint"), TransactionFilterProxy::TYPE(TransactionRecord::ZerocoinMint));
-    typeWidget->addItem(tr("Zerocoin Spend"), TransactionFilterProxy::TYPE(TransactionRecord::ZerocoinSpend));
-    typeWidget->addItem(tr("Zerocoin Spend, Change in zECA"), TransactionFilterProxy::TYPE(TransactionRecord::ZerocoinSpend_Change_zEca));
-    typeWidget->addItem(tr("Zerocoin Spend to Self"), TransactionFilterProxy::TYPE(TransactionRecord::ZerocoinSpend_FromMe));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
     typeWidget->setCurrentIndex(settings.value("transactionType").toInt());
 
@@ -162,10 +150,6 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     QAction* copyTxIDAction = new QAction(tr("Copy transaction ID"), this);
     QAction* editLabelAction = new QAction(tr("Edit label"), this);
     QAction* showDetailsAction = new QAction(tr("Show transaction details"), this);
-    hideOrphansAction = new QAction(tr("Hide orphan stakes"), this);
-
-    hideOrphansAction->setCheckable(true);
-    hideOrphansAction->setChecked(settings.value("fHideOrphans", false).toBool());
 
     contextMenu = new QMenu();
     contextMenu->addAction(copyAddressAction);
@@ -174,7 +158,6 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     contextMenu->addAction(copyTxIDAction);
     contextMenu->addAction(editLabelAction);
     contextMenu->addAction(showDetailsAction);
-    contextMenu->addAction(hideOrphansAction);
 
     mapperThirdPartyTxUrls = new QSignalMapper(this);
 
@@ -197,7 +180,6 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     connect(copyTxIDAction, SIGNAL(triggered()), this, SLOT(copyTxID()));
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
-    connect(hideOrphansAction, SIGNAL(toggled(bool)), this, SLOT(updateHideOrphans(bool)));
 }
 
 void TransactionView::setModel(WalletModel* model)
@@ -247,8 +229,6 @@ void TransactionView::setModel(WalletModel* model)
                     mapperThirdPartyTxUrls->setMapping(thirdPartyTxUrlAction, listUrls[i].trimmed());
                 }
             }
-			
-            connect(model->getOptionsModel(), SIGNAL(hideOrphansChanged(bool)), this, SLOT(updateHideOrphans(bool)));
         }
 
         // show/hide column Watch-only
@@ -260,9 +240,6 @@ void TransactionView::setModel(WalletModel* model)
         // Update transaction list with persisted settings
         chooseType(settings.value("transactionType").toInt());
         chooseDate(settings.value("transactionDate").toInt());
-
-        // Hide orphans
-        hideOrphans(settings.value("fHideOrphans", false).toBool());
     }
 }
 
@@ -329,28 +306,6 @@ void TransactionView::chooseType(int idx)
     settings.setValue("transactionType", idx);
 }
 
-void TransactionView::hideOrphans(bool fHide)
-{
-    if (!transactionProxyModel)
-        return;
-    transactionProxyModel->setHideOrphans(fHide);
-}
-
-void TransactionView::updateHideOrphans(bool fHide)
-{
-    QSettings settings;
-    if (settings.value("fHideOrphans", false).toBool() != fHide) {
-        settings.setValue("fHideOrphans", fHide);
-        if (model && model->getOptionsModel())
-            emit model->getOptionsModel()->hideOrphansChanged(fHide);
-    }
-    hideOrphans(fHide);
-    // retain consistency with other checkboxes
-    if (hideOrphansAction->isChecked() != fHide)
-        hideOrphansAction->setChecked(fHide);
-
-}
-
 void TransactionView::chooseWatchonly(int idx)
 {
     if (!transactionProxyModel)
@@ -372,16 +327,14 @@ void TransactionView::changedAmount(const QString& amount)
         return;
     CAmount amount_parsed = 0;
 
-    if (model) {
-        // Replace "," by "." so BitcoinUnits::parse will not fail for users entering "," as decimal separator
-        QString newAmount = amount;
-        newAmount.replace(QString(","), QString("."));
+    // Replace "," by "." so BitcoinUnits::parse will not fail for users entering "," as decimal separator
+    QString newAmount = amount;
+    newAmount.replace(QString(","), QString("."));
 
-        if (BitcoinUnits::parse(model->getOptionsModel()->getDisplayUnit(), newAmount, &amount_parsed)) {
-            transactionProxyModel->setMinAmount(amount_parsed);
-        } else {
-            transactionProxyModel->setMinAmount(0);
-        }
+    if (BitcoinUnits::parse(model->getOptionsModel()->getDisplayUnit(), newAmount, &amount_parsed)) {
+        transactionProxyModel->setMinAmount(amount_parsed);
+    } else {
+        transactionProxyModel->setMinAmount(0);
     }
 }
 
@@ -396,31 +349,25 @@ void TransactionView::exportClicked()
         return;
 
     CSVModelWriter writer(filename);
-    bool fExport = false;
 
-    if (model) {
-        // name, column, role
-        writer.setModel(transactionProxyModel);
-        writer.addColumn(tr("Confirmed"), 0, TransactionTableModel::ConfirmedRole);
-        if (model->haveWatchOnly())
-            writer.addColumn(tr("Watch-only"), TransactionTableModel::Watchonly);
-        writer.addColumn(tr("Date"), 0, TransactionTableModel::DateRole);
-        writer.addColumn(tr("Type"), TransactionTableModel::Type, Qt::EditRole);
-        writer.addColumn(tr("Label"), 0, TransactionTableModel::LabelRole);
-        writer.addColumn(tr("Address"), 0, TransactionTableModel::AddressRole);
-        writer.addColumn(BitcoinUnits::getAmountColumnTitle(model->getOptionsModel()->getDisplayUnit()), 0, TransactionTableModel::FormattedAmountRole);
-        writer.addColumn(tr("ID"), 0, TransactionTableModel::TxIDRole);
+    // name, column, role
+    writer.setModel(transactionProxyModel);
+    writer.addColumn(tr("Confirmed"), 0, TransactionTableModel::ConfirmedRole);
+    if (model && model->haveWatchOnly())
+        writer.addColumn(tr("Watch-only"), TransactionTableModel::Watchonly);
+    writer.addColumn(tr("Date"), 0, TransactionTableModel::DateRole);
+    writer.addColumn(tr("Type"), TransactionTableModel::Type, Qt::EditRole);
+    writer.addColumn(tr("Label"), 0, TransactionTableModel::LabelRole);
+    writer.addColumn(tr("Address"), 0, TransactionTableModel::AddressRole);
+    writer.addColumn(BitcoinUnits::getAmountColumnTitle(model->getOptionsModel()->getDisplayUnit()), 0, TransactionTableModel::FormattedAmountRole);
+    writer.addColumn(tr("ID"), 0, TransactionTableModel::TxIDRole);
 
-        fExport = writer.write();
-    }
-
-    if (fExport) {
-        emit message(tr("Exporting Successful"), tr("The transaction history was successfully saved to %1.").arg(filename),
-                     CClientUIInterface::MSG_INFORMATION);
-    } 
-    else {
+    if (!writer.write()) {
         emit message(tr("Exporting Failed"), tr("There was an error trying to save the transaction history to %1.").arg(filename),
-                     CClientUIInterface::MSG_ERROR);
+            CClientUIInterface::MSG_ERROR);
+    } else {
+        emit message(tr("Exporting Successful"), tr("The transaction history was successfully saved to %1.").arg(filename),
+            CClientUIInterface::MSG_INFORMATION);
     }
 }
 

@@ -1,7 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +11,6 @@
 #include "tinyformat.h"
 #include "uint256.h"
 #include "util.h"
-#include "libzerocoin/Denominations.h"
 
 #include <vector>
 
@@ -161,7 +158,7 @@ public:
     // proof-of-stake specific fields
     uint256 GetBlockTrust() const;
     uint64_t nStakeModifier;             // hash modifier for proof-of-stake
-    unsigned int nStakeModifierChecksum; // checksum of index; in-memory only
+    unsigned int nStakeModifierChecksum; // checksum of index; in-memeory only
     COutPoint prevoutStake;
     unsigned int nStakeTime;
     uint256 hashProofOfStake;
@@ -174,14 +171,9 @@ public:
     unsigned int nTime;
     unsigned int nBits;
     unsigned int nNonce;
-    uint256 nAccumulatorCheckpoint;
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     uint32_t nSequenceId;
-
-    //! zerocoin specific fields
-    std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
-    std::vector<libzerocoin::CoinDenomination> vMintDenominationsInBlock;
 
     void SetNull()
     {
@@ -211,12 +203,6 @@ public:
         nTime = 0;
         nBits = 0;
         nNonce = 0;
-        nAccumulatorCheckpoint = 0;
-        // Start supply of each denomination with 0s
-        for (auto& denom : libzerocoin::zerocoinDenomList) {
-            mapZerocoinSupply.insert(make_pair(denom, 0));
-        }
-        vMintDenominationsInBlock.clear();
     }
 
     CBlockIndex()
@@ -233,8 +219,6 @@ public:
         nTime = block.nTime;
         nBits = block.nBits;
         nNonce = block.nNonce;
-        //if(block.nVersion > 9)
-            nAccumulatorCheckpoint = 0;
 
         //Proof of Stake
         bnChainTrust = uint256();
@@ -254,7 +238,6 @@ public:
             nStakeTime = 0;
         }
     }
-
 
     CDiskBlockPos GetBlockPos() const
     {
@@ -286,42 +269,7 @@ public:
         block.nTime = nTime;
         block.nBits = nBits;
         block.nNonce = nNonce;
-        block.nAccumulatorCheckpoint = nAccumulatorCheckpoint;
         return block;
-    }
-
-    int64_t GetZerocoinSupply() const
-    {
-        int64_t nTotal = 0;
-        for (auto& denom : libzerocoin::zerocoinDenomList) {
-            nTotal += GetZcMintsAmount(denom);
-        }
-        return nTotal;
-    }
-
-    /**
-     * Total of mints added to the specific accumulator.
-     * @param denom
-     * @return
-     */
-    int64_t GetZcMints(libzerocoin::CoinDenomination denom) const
-    {
-        return mapZerocoinSupply.at(denom);
-    }
-
-    /**
-     * Total available amount in an specific denom.
-     * @param denom
-     * @return
-     */
-    int64_t GetZcMintsAmount(libzerocoin::CoinDenomination denom) const
-    {
-        return libzerocoin::ZerocoinDenominationToAmount(denom) * GetZcMints(denom);
-    }
-
-    bool MintedDenomination(libzerocoin::CoinDenomination denom) const
-    {
-        return std::find(vMintDenominationsInBlock.begin(), vMintDenominationsInBlock.end(), denom) != vMintDenominationsInBlock.end();
     }
 
     uint256 GetBlockHash() const
@@ -394,13 +342,6 @@ public:
             nFlags |= BLOCK_STAKE_MODIFIER;
     }
 
-    /**
-     * Returns true if there are nRequired or more blocks of minVersion or above
-     * in the last Params().ToCheckBlockUpgradeMajority() blocks, starting at pstart
-     * and going backwards.
-     */
-    static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned int nRequired);
-
     std::string ToString() const
     {
         return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
@@ -453,9 +394,9 @@ public:
         hashNext = uint256();
     }
 
-    explicit CDiskBlockIndex(const CBlockIndex* pindex) : CBlockIndex(*pindex)
+    explicit CDiskBlockIndex(CBlockIndex* pindex) : CBlockIndex(*pindex)
     {
-        hashPrev = (pprev ? pprev->GetBlockHash() : uint256(0));
+        hashPrev = (pprev ? pprev->GetBlockHash() : uint256());
     }
 
     ADD_SERIALIZE_METHODS;
@@ -498,12 +439,6 @@ public:
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
-        /*if(this->nVersion > 9) {
-            READWRITE(nAccumulatorCheckpoint);
-            READWRITE(mapZerocoinSupply);
-            READWRITE(vMintDenominationsInBlock);
-        }*/
-
     }
 
     uint256 GetBlockHash() const
@@ -515,7 +450,6 @@ public:
         block.nTime = nTime;
         block.nBits = nBits;
         block.nNonce = nNonce;
-        block.nAccumulatorCheckpoint = nAccumulatorCheckpoint;
         return block.GetHash();
     }
 

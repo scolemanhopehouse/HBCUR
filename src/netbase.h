@@ -1,6 +1,4 @@
 // Copyright (c) 2009-2013 The Bitcoin developers
-// Copyright (c) 2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,7 +6,7 @@
 #define BITCOIN_NETBASE_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/hbcucoin-config.h"
+#include "config/hbcur-config.h"
 #endif
 
 #include "compat.h"
@@ -23,8 +21,6 @@ extern bool fNameLookup;
 
 /** -timeout default */
 static const int DEFAULT_CONNECT_TIMEOUT = 5000;
-//! -dns default
-static const int DEFAULT_NAME_LOOKUP = true;
 
 #ifdef WIN32
 // In MSVC, this is defined as a macro, undefine it to prevent a compile and link error
@@ -122,9 +118,6 @@ public:
     CSubNet();
     explicit CSubNet(const std::string& strSubnet, bool fAllowLookup = false);
 
-    //constructor for single ip subnet (<ipv4>/32 or <ipv6>/128)
-    explicit CSubNet(const CNetAddr &addr);
-
     bool Match(const CNetAddr& addr) const;
 
     std::string ToString() const;
@@ -132,16 +125,6 @@ public:
 
     friend bool operator==(const CSubNet& a, const CSubNet& b);
     friend bool operator!=(const CSubNet& a, const CSubNet& b);
-    friend bool operator<(const CSubNet& a, const CSubNet& b);
-
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        READWRITE(network);
-        READWRITE(FLATDATA(netmask));
-        READWRITE(FLATDATA(valid));
-    }
 };
 
 /** A combination of a network address (CNetAddr) and a (TCP) port */
@@ -188,25 +171,15 @@ public:
     }
 };
 
-class proxyType
-{
-public:
-    proxyType(): randomize_credentials(false) {}
-    proxyType(const CService &proxy, bool randomize_credentials=false): proxy(proxy), randomize_credentials(randomize_credentials) {}
-
-    bool IsValid() const { return proxy.IsValid(); }
-
-    CService proxy;
-    bool randomize_credentials;
-};
+typedef CService proxyType;
 
 enum Network ParseNetwork(std::string net);
 std::string GetNetworkName(enum Network net);
 void SplitHostPort(std::string in, int& portOut, std::string& hostOut);
-bool SetProxy(enum Network net, const proxyType &addrProxy);
+bool SetProxy(enum Network net, CService addrProxy);
 bool GetProxy(enum Network net, proxyType& proxyInfoOut);
 bool IsProxy(const CNetAddr& addr);
-bool SetNameProxy(const proxyType &addrProxy);
+bool SetNameProxy(CService addrProxy);
 bool HaveNameProxy();
 bool LookupHost(const char* pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions = 0, bool fAllowLookup = true);
 bool Lookup(const char* pszName, CService& addr, int portDefault = 0, bool fAllowLookup = true);
@@ -220,9 +193,5 @@ std::string NetworkErrorString(int err);
 bool CloseSocket(SOCKET& hSocket);
 /** Disable or enable blocking-mode for a socket */
 bool SetSocketNonBlocking(SOCKET& hSocket, bool fNonBlocking);
-/**
- * Convert milliseconds to a struct timeval for e.g. select.
- */
-struct timeval MillisToTimeval(int64_t nTimeout);
 
 #endif // BITCOIN_NETBASE_H

@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2016-2018 The xx developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -119,12 +118,12 @@ void WalletFrame::gotoHistoryPage()
         i.value()->gotoHistoryPage();
 }
 
-//void WalletFrame::gotoMasternodePage() // Masternode list
-//{
-//    QMap<QString, WalletView*>::const_iterator i;
-//    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-//       i.value()->gotoMasternodePage();
-//}
+void WalletFrame::gotoMasternodePage() // Masternode list
+{
+    QMap<QString, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoMasternodePage();
+}
 
 void WalletFrame::gotoBlockExplorerPage()
 {
@@ -138,13 +137,6 @@ void WalletFrame::gotoReceiveCoinsPage()
     QMap<QString, WalletView*>::const_iterator i;
     for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
         i.value()->gotoReceiveCoinsPage();
-}
-
-void WalletFrame::gotoPrivacyPage()
-{
-    QMap<QString, WalletView*>::const_iterator i;
-    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoPrivacyPage();
 }
 
 void WalletFrame::gotoSendCoinsPage(QString addr)
@@ -212,21 +204,11 @@ void WalletFrame::changePassphrase()
         walletView->changePassphrase();
 }
 
-void WalletFrame::unlockWallet(bool setContext)
-{
-    if (setContext) {
-        unlockWallet(AskPassphraseDialog::Context::Unlock_Full);
-    }
-    else {
-        unlockWallet(AskPassphraseDialog::Context::Unlock_Menu);
-    }
-}
-
-void WalletFrame::unlockWallet(AskPassphraseDialog::Context context)
+void WalletFrame::unlockWallet()
 {
     WalletView* walletView = currentWalletView();
     if (walletView)
-        walletView->unlockWallet(context);
+        walletView->unlockWallet();
 }
 
 void WalletFrame::lockWallet()
@@ -234,13 +216,6 @@ void WalletFrame::lockWallet()
     WalletView* walletView = currentWalletView();
     if (walletView)
         walletView->lockWallet();
-}
-
-void WalletFrame::toggleLockWallet()
-{
-    WalletView* walletView = currentWalletView();
-    if (walletView)
-        walletView->toggleLockWallet();
 }
 
 void WalletFrame::usedSendingAddresses()

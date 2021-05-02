@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The xx developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The hbcur developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -77,7 +78,7 @@ extern double NSAppKitVersionNumber;
 #endif
 #endif
 
-#define URI_SCHEME "hbcucoin"
+#define URI_SCHEME "hbcur"
 
 namespace GUIUtil
 {
@@ -110,7 +111,7 @@ void setupAddressWidget(QValidatedLineEdit* widget, QWidget* parent)
 #if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a hbcucoin address (e.g. %1)").arg("D7VFR83SQbiezrW72hjcWJtcfip5krte2Z"));
+    widget->setPlaceholderText(QObject::tr("Enter a hbcur address (e.g. %1)").arg("AWSbBnzmNkjDVaYHX7vkL1MqD96pRYWtZo"));
 #endif
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
@@ -127,7 +128,7 @@ void setupAmountWidget(QLineEdit* widget, QWidget* parent)
 
 bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out)
 {
-    // return if URI is not valid or is no hbcucoin: URI
+    // return if URI is not valid or is no hbcur: URI
     if (!uri.isValid() || uri.scheme() != QString(URI_SCHEME))
         return false;
 
@@ -161,7 +162,7 @@ bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out)
             fShouldReturnFalse = false;
         } else if (i->first == "amount") {
             if (!i->second.isEmpty()) {
-                if (!BitcoinUnits::parse(BitcoinUnits::hbcucoin, i->second, &rv.amount)) {
+                if (!BitcoinUnits::parse(BitcoinUnits::HBCUR, i->second, &rv.amount)) {
                     return false;
                 }
             }
@@ -179,9 +180,9 @@ bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out)
 
 bool parseBitcoinURI(QString uri, SendCoinsRecipient* out)
 {
-    // Convert hbcucoin:// to hbcucoin:
+    // Convert hbcur:// to hbcur:
     //
-    //    Cannot handle this later, because hbcucoin:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because hbcur:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
     if (uri.startsWith(URI_SCHEME "://", Qt::CaseInsensitive)) {
         uri.replace(0, std::strlen(URI_SCHEME) + 3, URI_SCHEME ":");
@@ -196,7 +197,7 @@ QString formatBitcoinURI(const SendCoinsRecipient& info)
     int paramCount = 0;
 
     if (info.amount) {
-        ret += QString("?amount=%1").arg(BitcoinUnits::format(BitcoinUnits::hbcucoin, info.amount, false, BitcoinUnits::separatorNever));
+        ret += QString("?amount=%1").arg(BitcoinUnits::format(BitcoinUnits::HBCUR, info.amount, false, BitcoinUnits::separatorNever));
         paramCount++;
     }
 
@@ -256,15 +257,15 @@ void copyEntryData(QAbstractItemView* view, int column, int role)
 
 QString getEntryData(QAbstractItemView *view, int column, int role)
 {
-    if(!view || !view->selectionModel())
+   if(!view || !view->selectionModel())
         return QString();
     QModelIndexList selection = view->selectionModel()->selectedRows(column);
 
     if(!selection.isEmpty()) {
         // Return first item
         return (selection.at(0).data(role).toString());
-    }
-    return QString();
+   }
+   return QString();
 }
 
 QString getSaveFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut)
@@ -372,19 +373,19 @@ void openConfigfile()
 {
     boost::filesystem::path pathConfig = GetConfigFile();
 
-    /* Open hbcucoin.conf with the associated application */
+    /* Open hbcur.conf with the associated application */
     if (boost::filesystem::exists(pathConfig))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 }
 
-//void openMNConfigfile()
-//{
-//    boost::filesystem::path pathConfig = GetMasternodeConfigFile();
-//
+void openMNConfigfile()
+{
+    boost::filesystem::path pathConfig = GetMasternodeConfigFile();
+
     /* Open masternode.conf with the associated application */
-//    if (boost::filesystem::exists(pathConfig))
-//        QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
-//}
+    if (boost::filesystem::exists(pathConfig))
+        QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
+}
 
 void showBackups()
 {
@@ -594,12 +595,12 @@ bool DHMSTableWidgetItem::operator<(QTableWidgetItem const& item) const
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
-    return GetSpecialFolderPath(CSIDL_STARTUP) / "hbcucoin.lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / "hbcur.lnk";
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for hbcucoin.lnk
+    // check for hbcur.lnk
     return boost::filesystem::exists(StartupShortcutPath());
 }
 
@@ -673,7 +674,7 @@ boost::filesystem::path static GetAutostartDir()
 
 boost::filesystem::path static GetAutostartFilePath()
 {
-    return GetAutostartDir() / "hbcucoin.desktop";
+    return GetAutostartDir() / "hbcur.desktop";
 }
 
 bool GetStartOnSystemStartup()
@@ -709,10 +710,10 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         boost::filesystem::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out | std::ios_base::trunc);
         if (!optionFile.good())
             return false;
-        // Write a hbcucoin.desktop file to the autostart directory:
+        // Write a hbcur.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
-        optionFile << "Name=hbcucoin\n";
+        optionFile << "Name=hbcur\n";
         optionFile << "Exec=" << pszExePath << " -min\n";
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -723,8 +724,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 
 
 #elif defined(Q_OS_MAC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 // based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -733,25 +732,14 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
 {
-    // loop through the list of startup items and try to find the hbcucoin app
+    // loop through the list of startup items and try to find the hbcur app
     CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
     for (int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
         UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
         CFURLRef currentItemURL = NULL;
-
-#if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED >= 10100
-    if(&LSSharedFileListItemCopyResolvedURL)
-        currentItemURL = LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, NULL);
-#if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 10100
-    else
         LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, NULL);
-#endif
-#else
-    LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, NULL);
-#endif
-
-        if(currentItemURL && CFEqual(currentItemURL, findUrl)) {
+        if (currentItemURL && CFEqual(currentItemURL, findUrl)) {
             // found
             CFRelease(currentItemURL);
             return item;
@@ -778,7 +766,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
     if (fAutoStart && !foundItem) {
-        // add hbcucoin app to startup item list
+        // add hbcur app to startup item list
         LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, bitcoinAppUrl, NULL, NULL);
     } else if (!fAutoStart && foundItem) {
         // remove item
@@ -786,7 +774,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     }
     return true;
 }
-#pragma GCC diagnostic pop
 #else
 
 bool GetStartOnSystemStartup()
@@ -820,16 +807,13 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, 
     parent->move(pos);
 }
 
-// Return name of current UI-theme or default theme if no theme was found
-QString getThemeName()
+// Check whether a theme is not build-in
+bool isExternal(QString theme)
 {
-    QSettings settings;
-    QString theme = settings.value("theme", "").toString();
+    if (theme.isEmpty())
+        return false;
 
-    if(!theme.isEmpty()){
-        return theme;
-    }
-    return QString("default");
+    return (theme.operator!=("default"));
 }
 
 // Open CSS when configured
@@ -840,12 +824,20 @@ QString loadStyleSheet()
     QString cssName;
     QString theme = settings.value("theme", "").toString();
 
-    if(!theme.isEmpty()){
-        cssName = QString(":/css/") + theme;
-    }
-    else {
-        cssName = QString(":/css/default");
-        settings.setValue("theme", "default");
+    if (isExternal(theme)) {
+        // External CSS
+        settings.setValue("fCSSexternal", true);
+        boost::filesystem::path pathAddr = GetDataDir() / "themes/";
+        cssName = pathAddr.string().c_str() + theme + "/css/theme.css";
+    } else {
+        // Build-in CSS
+        settings.setValue("fCSSexternal", false);
+        if (!theme.isEmpty()) {
+            cssName = QString(":/css/") + theme;
+        } else {
+            cssName = QString(":/css/default");
+            settings.setValue("theme", "default");
+        }
     }
 
     QFile qFile(cssName);
@@ -914,12 +906,12 @@ QString formatServicesStr(quint64 mask)
         uint64_t check = 1 << i;
         if (mask & check) {
             switch (check) {
+	    case NODE_BLOOM:
+	    case NODE_BLOOM_WITHOUT_MN:
+		    strList.append(QObject::tr("BLOOM"));
+		    break;
             case NODE_NETWORK:
                 strList.append(QObject::tr("NETWORK"));
-                break;
-            case NODE_BLOOM:
-            case NODE_BLOOM_WITHOUT_MN:
-                strList.append(QObject::tr("BLOOM"));
                 break;
             default:
                 strList.append(QString("%1[%2]").arg(QObject::tr("UNKNOWN")).arg(check));
@@ -936,11 +928,6 @@ QString formatServicesStr(quint64 mask)
 QString formatPingTime(double dPingTime)
 {
     return dPingTime == 0 ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
-}
-
-QString formatTimeOffset(int64_t nTimeOffset)
-{
-  return QString(QObject::tr("%1 s")).arg(QString::number((int)nTimeOffset, 10));
 }
 
 } // namespace GUIUtil

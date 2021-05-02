@@ -17,7 +17,7 @@ osx=true
 SIGNER=
 VERSION=
 commit=false
-url=https://github.com/hbcucoin-project/hbcucoin
+url=https://github.com/hbcur-crypto/hbcur
 proc=2
 mem=2000
 lxc=true
@@ -31,7 +31,7 @@ commitFiles=true
 read -d '' usage <<- EOF
 Usage: $scriptName [-c|u|v|b|s|B|o|h|j|m|] signer version
 
-Run this script from the directory containing the hbcucoin, gitian-builder, gitian.sigs, and hbcucoin-detached-sigs.
+Run this script from the directory containing the hbcur, gitian-builder, gitian.sigs, and hbcur-detached-sigs.
 
 Arguments:
 signer          GPG signer to sign each build assert file
@@ -39,7 +39,7 @@ version		Version number, commit, or branch to build. If building a commit or bra
 
 Options:
 -c|--commit	Indicate that the version argument is for a commit or branch
--u|--url	Specify the URL of the repository. Default is https://github.com/hbcucoinlliumcoin/hbcucoinlliumMN
+-u|--url	Specify the URL of the repository. Default is https://github.com/hbcur-crypto/hbcur
 -v|--verify 	Verify the gitian build
 -b|--build	Do a gitian build
 -s|--sign	Make signed binaries for Windows and Mac OSX
@@ -237,8 +237,8 @@ echo ${COMMIT}
 if [[ $setup = true ]]
 then
     sudo apt-get install ruby apache2 git apt-cacher-ng python-vm-builder qemu-kvm qemu-utils
-    git clone https://github.com/hbcucoinlliumcoin/gitian.sigs.git
-    git clone https://github.com/hbcucoinlliumcoin/hbcucoin-detached-sigs.git
+    git clone https://github.com/hbcur-crypto/gitian.sigs.git
+    git clone https://github.com/hbcur-crypto/hbcur-detached-sigs.git
     git clone https://github.com/devrandom/gitian-builder.git
     pushd ./gitian-builder
     if [[ -n "$USE_LXC" ]]
@@ -252,7 +252,7 @@ then
 fi
 
 # Set up build
-pushd ./hbcucoin
+pushd ./hbcur
 git fetch
 git checkout ${COMMIT}
 popd
@@ -261,7 +261,7 @@ popd
 if [[ $build = true ]]
 then
 	# Make output folder
-	mkdir -p ./hbcucoin-binaries/${VERSION}
+	mkdir -p ./hbcur-binaries/${VERSION}
 
 	# Build Dependencies
 	echo ""
@@ -271,7 +271,7 @@ then
 	mkdir -p inputs
 	wget -N -P inputs $osslPatchUrl
 	wget -N -P inputs $osslTarUrl
-	make -C ../hbcucoin/depends download SOURCES_PATH=`pwd`/cache/common
+	make -C ../hbcur/depends download SOURCES_PATH=`pwd`/cache/common
 
 	# Linux
 	if [[ $linux = true ]]
@@ -279,9 +279,9 @@ then
             echo ""
 	    echo "Compiling ${VERSION} Linux"
 	    echo ""
-	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcucoin=${COMMIT} --url hbcucoin=${url} ../hbcucoin/contrib/gitian-descriptors/gitian-linux.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-linux.yml
-	    mv build/out/hbcucoin-*.tar.gz build/out/src/hbcucoin-*.tar.gz ../hbcucoin-binaries/${VERSION}
+	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcur=${COMMIT} --url hbcur=${url} ../hbcur/contrib/gitian-descriptors/gitian-linux.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-linux.yml
+	    mv build/out/hbcur-*.tar.gz build/out/src/hbcur-*.tar.gz ../hbcur-binaries/${VERSION}
 	fi
 	# Windows
 	if [[ $windows = true ]]
@@ -289,10 +289,10 @@ then
 	    echo ""
 	    echo "Compiling ${VERSION} Windows"
 	    echo ""
-	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcucoin=${COMMIT} --url hbcucoin=${url} ../hbcucoin/contrib/gitian-descriptors/gitian-win.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-win.yml
-	    mv build/out/hbcucoin-*-win-unsigned.tar.gz inputs/hbcucoin-win-unsigned.tar.gz
-	    mv build/out/hbcucoin-*.zip build/out/hbcucoin-*.exe ../hbcucoin-binaries/${VERSION}
+	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcur=${COMMIT} --url hbcur=${url} ../hbcur/contrib/gitian-descriptors/gitian-win.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-win.yml
+	    mv build/out/hbcur-*-win-unsigned.tar.gz inputs/hbcur-win-unsigned.tar.gz
+	    mv build/out/hbcur-*.zip build/out/hbcur-*.exe ../hbcur-binaries/${VERSION}
 	fi
 	# Mac OSX
 	if [[ $osx = true ]]
@@ -300,10 +300,10 @@ then
 	    echo ""
 	    echo "Compiling ${VERSION} Mac OSX"
 	    echo ""
-	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcucoin=${COMMIT} --url hbcucoin=${url} ../hbcucoin/contrib/gitian-descriptors/gitian-osx.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-osx.yml
-	    mv build/out/hbcucoin-*-osx-unsigned.tar.gz inputs/hbcucoin-osx-unsigned.tar.gz
-	    mv build/out/hbcucoin-*.tar.gz build/out/hbcucoin-*.dmg ../hbcucoin-binaries/${VERSION}
+	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcur=${COMMIT} --url hbcur=${url} ../hbcur/contrib/gitian-descriptors/gitian-osx.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-osx.yml
+	    mv build/out/hbcur-*-osx-unsigned.tar.gz inputs/hbcur-osx-unsigned.tar.gz
+	    mv build/out/hbcur-*.tar.gz build/out/hbcur-*.dmg ../hbcur-binaries/${VERSION}
 	fi
 	# AArch64
 	if [[ $aarch64 = true ]]
@@ -311,9 +311,9 @@ then
 	    echo ""
 	    echo "Compiling ${VERSION} AArch64"
 	    echo ""
-	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcucoin=${COMMIT} --url hbcucoin=${url} ../hbcucoin/contrib/gitian-descriptors/gitian-aarch64.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-aarch64 --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-aarch64.yml
-	    mv build/out/hbcucoin-*.tar.gz build/out/src/hbcucoin-*.tar.gz ../hbcucoin-binaries/${VERSION}
+	    ./bin/gbuild -j ${proc} -m ${mem} --commit hbcur=${COMMIT} --url hbcur=${url} ../hbcur/contrib/gitian-descriptors/gitian-aarch64.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-aarch64 --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-aarch64.yml
+	    mv build/out/hbcur-*.tar.gz build/out/src/hbcur-*.tar.gz ../hbcur-binaries/${VERSION}
 	popd
 
         if [[ $commitFiles = true ]]
@@ -340,32 +340,32 @@ then
 	echo ""
 	echo "Verifying v${VERSION} Linux"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../hbcucoin/contrib/gitian-descriptors/gitian-linux.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../hbcur/contrib/gitian-descriptors/gitian-linux.yml
 	# Windows
 	echo ""
 	echo "Verifying v${VERSION} Windows"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../hbcucoin/contrib/gitian-descriptors/gitian-win.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../hbcur/contrib/gitian-descriptors/gitian-win.yml
 	# Mac OSX
 	echo ""
 	echo "Verifying v${VERSION} Mac OSX"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../hbcucoin/contrib/gitian-descriptors/gitian-osx.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../hbcur/contrib/gitian-descriptors/gitian-osx.yml
 	# AArch64
 	echo ""
 	echo "Verifying v${VERSION} AArch64"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-aarch64 ../hbcucoin/contrib/gitian-descriptors/gitian-aarch64.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-aarch64 ../hbcur/contrib/gitian-descriptors/gitian-aarch64.yml
 	# Signed Windows
 	echo ""
 	echo "Verifying v${VERSION} Signed Windows"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../hbcucoin/contrib/gitian-descriptors/gitian-osx-signer.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../hbcur/contrib/gitian-descriptors/gitian-osx-signer.yml
 	# Signed Mac OSX
 	echo ""
 	echo "Verifying v${VERSION} Signed Mac OSX"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../hbcucoin/contrib/gitian-descriptors/gitian-osx-signer.yml
+	./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../hbcur/contrib/gitian-descriptors/gitian-osx-signer.yml
 	popd
 fi
 
@@ -380,10 +380,10 @@ then
 	    echo ""
 	    echo "Signing ${VERSION} Windows"
 	    echo ""
-	    ./bin/gbuild -i --commit signature=${COMMIT} ../hbcucoin/contrib/gitian-descriptors/gitian-win-signer.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-win-signer.yml
-	    mv build/out/hbcucoin-*win64-setup.exe ../hbcucoin-binaries/${VERSION}
-	    mv build/out/hbcucoin-*win32-setup.exe ../hbcucoin-binaries/${VERSION}
+	    ./bin/gbuild -i --commit signature=${COMMIT} ../hbcur/contrib/gitian-descriptors/gitian-win-signer.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-win-signer.yml
+	    mv build/out/hbcur-*win64-setup.exe ../hbcur-binaries/${VERSION}
+	    mv build/out/hbcur-*win32-setup.exe ../hbcur-binaries/${VERSION}
 	fi
 	# Sign Mac OSX
 	if [[ $osx = true ]]
@@ -391,9 +391,9 @@ then
 	    echo ""
 	    echo "Signing ${VERSION} Mac OSX"
 	    echo ""
-	    ./bin/gbuild -i --commit signature=${COMMIT} ../hbcucoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../hbcucoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-	    mv build/out/hbcucoin-osx-signed.dmg ../hbcucoin-binaries/${VERSION}/hbcucoin-${VERSION}-osx.dmg
+	    ./bin/gbuild -i --commit signature=${COMMIT} ../hbcur/contrib/gitian-descriptors/gitian-osx-signer.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../hbcur/contrib/gitian-descriptors/gitian-osx-signer.yml
+	    mv build/out/hbcur-osx-signed.dmg ../hbcur-binaries/${VERSION}/hbcur-${VERSION}-osx.dmg
 	fi
 	popd
 

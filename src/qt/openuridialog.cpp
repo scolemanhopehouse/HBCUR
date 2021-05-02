@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The xx developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The hbcur developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,12 +13,12 @@
 
 #include <QUrl>
 
-OpenURIDialog::OpenURIDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+OpenURIDialog::OpenURIDialog(QWidget* parent) : QDialog(parent),
                                                 ui(new Ui::OpenURIDialog)
 {
     ui->setupUi(this);
 #if QT_VERSION >= 0x040700
-    ui->uriEdit->setPlaceholderText("hbcucoin:");
+    ui->uriEdit->setPlaceholderText("hbcur:");
 #endif
 }
 
@@ -48,5 +49,5 @@ void OpenURIDialog::on_selectFileButton_clicked()
     if (filename.isEmpty())
         return;
     QUrl fileUri = QUrl::fromLocalFile(filename);
-    ui->uriEdit->setText("hbcucoin:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
+    ui->uriEdit->setText("hbcur:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
 }

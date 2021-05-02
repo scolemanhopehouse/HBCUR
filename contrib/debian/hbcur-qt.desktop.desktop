@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=hbcur
+Comment=hbcur P2P Cryptocurrency
+Exec=hbcur-qt %u
+Terminal=false
+Type=Application
+Icon=hbcur128
+MimeType=x-scheme-handler/hbcur;
+Categories=Office;Finance;
+Name[en_US]=hbcur-qt.desktop

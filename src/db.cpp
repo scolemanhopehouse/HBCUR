@@ -46,7 +46,7 @@ void CDBEnv::EnvShutdown()
     if (ret != 0)
         LogPrintf("CDBEnv::EnvShutdown : Error %d shutting down database environment: %s\n", ret, DbEnv::strerror(ret));
     if (!fMockDb)
-         DbEnv((u_int32_t)0).remove(strPath.c_str(), 0);
+        DbEnv(0).remove(strPath.c_str(), 0);
 }
 
 CDBEnv::CDBEnv() : dbenv(DB_CXX_NO_EXCEPTIONS)
@@ -260,9 +260,8 @@ CDB::CDB(const std::string& strFilename, const char* pszMode) : pdb(NULL), activ
                 delete pdb;
                 pdb = NULL;
                 --bitdb.mapFileUseCount[strFile];
-                std::string tempCopy(strFile);
                 strFile = "";
-                throw std::runtime_error(strprintf("CDB : Error %d, can't open database %s", ret, tempCopy));
+                throw runtime_error(strprintf("CDB : Error %d, can't open database %s", ret, strFile));
             }
 
             if (fCreate && !Exists(string("version"))) {

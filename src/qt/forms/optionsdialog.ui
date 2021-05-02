@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>576</width>
-    <height>442</height>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMain">
       <attribute name="title">
@@ -30,10 +30,10 @@
        <item>
         <widget class="QCheckBox" name="bitcoinAtStartup">
          <property name="toolTip">
-          <string>Automatically start hbcucoin after logging in to the system.</string>
+          <string>Automatically start hbcur after logging in to the system.</string>
          </property>
          <property name="text">
-          <string>&amp;Start hbcucoin on system login</string>
+          <string>&amp;Start hbcur on system login</string>
          </property>
         </widget>
        </item>
@@ -118,7 +118,7 @@
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
+        <spacer name="verticalSpacer_Main">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -130,87 +130,75 @@
          </property>
         </spacer>
        </item>
-       <!--
        <item>
-        <widget class="QCheckBox" name="checkBoxZeromintEnable">
-         <property name="toolTip">
-          <string>Enable automatic minting of hbcucoin units to zECA</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Enable zECA Automint</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_4_Main">
          <item>
-          <widget class="QLabel" name="percentage_label">
+          <widget class="QLabel" name="label">
            <property name="toolTip">
-            <string>Percentage of incoming hbcucoin which get automatically converted to zECA via Zerocoin Protocol (min: 10%)</string>
+            <string>This setting determines the amount of individual masternodes that an input will be anonymized through.&lt;br/&gt;More rounds of anonymization gives a higher degree of privacy, but also costs more in fees.</string>
            </property>
            <property name="text">
-            <string>Percentage of autominted zECA</string>
+            <string>Obfuscation rounds to use</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="zeromintPercentage">
+          <widget class="QSpinBox" name="obfuscationRounds">
            <property name="minimum">
-            <number>1</number>
+            <number>2</number>
            </property>
            <property name="maximum">
-            <number>100</number>
+            <number>8</number>
+           </property>
+           <property name="value">
+            <number>4</number>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetFixedSize</enum>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="labelPreferredDenom">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QLabel" name="label_2">
            <property name="toolTip">
-            <string>Wait with automatic conversion to Zerocoin until enough hbcucoin for this denomination is available</string>
+            <string>This amount acts as a threshold to turn off Obfuscation once it's reached.</string>
+           </property>
+           <property name="statusTip">
+            <string notr="true"/>
+           </property>
+           <property name="whatsThis">
+            <string notr="true"/>
+           </property>
+           <property name="accessibleName">
+            <string notr="true"/>
+           </property>
+           <property name="accessibleDescription">
+            <string notr="true"/>
            </property>
            <property name="text">
-            <string>Preferred Automint zECA Denomination</string>
+            <string>Amount of hbcur to keep anonymized</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="preferredDenom">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>27</height>
-            </size>
+          <widget class="QSpinBox" name="anonymizehbcur">
+           <property name="minimum">
+            <number>100</number>
            </property>
-           <property name="toolTip">
-            <string>Wait with automatic conversion to Zerocoin until enough hbcucoin for this denomination is available</string>
+           <property name="maximum">
+            <number>100000</number>
            </property>
-           <property name="maxVisibleItems">
-            <number>9</number>
+           <property name="singleStep">
+            <number>100</number>
            </property>
-           <property name="maxCount">
-            <number>9</number>
+           <property name="value">
+            <number>1000</number>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-      -->
       </layout>
      </widget>
      <widget class="QWidget" name="tabWallet">
@@ -218,27 +206,6 @@
        <string>W&amp;allet</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_Wallet">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2_Wallet">
-         <item>
-          <widget class="QLabel" name="labelStakeSplitThresholdText">
-           <property name="text">
-            <string>Stake split threshold:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spinBoxStakeSplitThreshold">
-           <property name="minimum">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <number>9999999</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -255,7 +222,6 @@
             </property>
            </widget>
           </item>
-          <!--
           <item>
            <widget class="QCheckBox" name="showMasternodesTab">
             <property name="toolTip">
@@ -266,7 +232,6 @@
             </property>
            </widget>
           </item>
-          -->
           <item>
            <widget class="QCheckBox" name="spendZeroConfChange">
             <property name="toolTip">
@@ -303,7 +268,7 @@
        <item>
         <widget class="QCheckBox" name="mapPortUpnp">
          <property name="toolTip">
-          <string>Automatically open the hbcucoin client port on the router. This only works when your router supports UPnP and it is enabled.</string>
+          <string>Automatically open the hbcur client port on the router. This only works when your router supports UPnP and it is enabled.</string>
          </property>
          <property name="text">
           <string>Map port using &amp;UPnP</string>
@@ -323,7 +288,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocks">
          <property name="toolTip">
-          <string>Connect to the hbcucoin network through a SOCKS5 proxy.</string>
+          <string>Connect to the hbcur network through a SOCKS5 proxy.</string>
          </property>
          <property name="text">
           <string>&amp;Connect through SOCKS5 proxy (default proxy):</string>
@@ -489,7 +454,7 @@
          <item>
           <widget class="QValueComboBox" name="lang">
            <property name="toolTip">
-            <string>The user interface language can be set here. This setting will take effect after restarting hbcucoin.</string>
+            <string>The user interface language can be set here. This setting will take effect after restarting hbcur.</string>
            </property>
           </widget>
          </item>
@@ -511,7 +476,7 @@
          </property>
          <property name="text">
           <string>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/hbcucoin-project/hbcucoin-project-translations</string>
+https://www.transifex.com/hbcur-project/hbcur-project-translations</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -525,7 +490,7 @@ https://www.transifex.com/hbcucoin-project/hbcucoin-project-translations</string
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2_Display" stretch="0,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4_Display" stretch="0,0">
          <item>
           <widget class="QLabel" name="themeLabel">
            <property name="text">
@@ -546,7 +511,7 @@ https://www.transifex.com/hbcucoin-project/hbcucoin-project-translations</string
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3_Display">
+        <layout class="QHBoxLayout" name="horizontalLayout_2_Display">
          <item>
           <widget class="QLabel" name="unitLabel">
            <property name="text">
@@ -570,7 +535,7 @@ https://www.transifex.com/hbcucoin-project/hbcucoin-project-translations</string
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4_Display">
+        <layout class="QHBoxLayout" name="horizontalLayout_5_Display">
          <item>
           <widget class="QLabel" name="digitsLabel">
            <property name="text">
@@ -584,47 +549,7 @@ https://www.transifex.com/hbcucoin-project/hbcucoin-project-translations</string
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5_Display">
-         <item>
-          <widget class="QCheckBox" name="checkBoxHideZeroBalances">
-           <property name="toolTip">
-            <string>Hide empty balances</string>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>Hide empty balances</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxHideOrphans">
-           <property name="toolTip">
-            <string>Hide orphan stakes in transaction lists</string>
-           </property>
-           <property name="text">
-            <string>Hide orphan stakes</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6_Display">
+        <layout class="QHBoxLayout" name="horizontalLayout_3_Display">
          <item>
           <widget class="QLabel" name="thirdPartyTxUrlsLabel">
            <property name="toolTip">

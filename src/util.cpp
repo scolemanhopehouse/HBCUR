@@ -1,13 +1,13 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The hbcur developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/hbcucoin-config.h"
+#include "config/hbcur-config.h"
 #endif
 
 #include "util.h"
@@ -106,26 +106,20 @@ std::string to_internal(const std::string&);
 
 using namespace std;
 
-// hbcucoin only features
-// Masternode
+//hbcur only features
 bool fMasterNode = false;
 string strMasterNodePrivKey = "";
 string strMasterNodeAddr = "";
 bool fLiteMode = false;
-// SwiftX
 bool fEnableSwiftTX = true;
 int nSwiftTXDepth = 5;
-// Automatic Zerocoin minting
-bool fEnableZeromint = true;
-int nZeromintPercentage = 10;
-int nPreferredDenom = 0;
-const int64_t AUTOMINT_DELAY = (60 * 5); // Wait at least 5 minutes until Automint starts
-
-int nAnonymizehbcucoinAmount = 1000;
+int nObfuscationRounds = 2;
+int nAnonymizehbcurAmount = 1000;
 int nLiquidityProvider = 0;
 /** Spork enforcement enabled time */
 int64_t enforceMasternodePaymentsTime = 4085657524;
 bool fSucessfullyLoaded = false;
+bool fEnableObfuscation = false;
 /** All denominations used by obfuscation */
 std::vector<int64_t> obfuScationDenominations;
 string strBudgetMode = "";
@@ -136,14 +130,15 @@ bool fDebug = false;
 bool fPrintToConsole = false;
 bool fPrintToDebugLog = true;
 bool fDaemon = false;
-std::string strMiscWarning;
+bool fServer = false;
+string strMiscWarning;
 bool fLogTimestamps = false;
 bool fLogIPs = false;
 volatile bool fReopenDebugLog = false;
 
 /** Init OpenSSL library multithreading support */
 static CCriticalSection** ppmutexOpenSSL;
-void locking_callback(int mode, int i, const char* file, int line) NO_THREAD_SAFETY_ANALYSIS
+void locking_callback(int mode, int i, const char* file, int line)
 {
     if (mode & CRYPTO_LOCK) {
         ENTER_CRITICAL_SECTION(*ppmutexOpenSSL[i]);
@@ -237,13 +232,12 @@ bool LogAcceptCategory(const char* category)
             const vector<string>& categories = mapMultiArgs["-debug"];
             ptrCategory.reset(new set<string>(categories.begin(), categories.end()));
             // thread_specific_ptr automatically deletes the set when the thread ends.
-            // "hbcucoin" is a composite category enabling all hbcucoin-related debug output
-            if (ptrCategory->count(string("hbcucoin"))) {
+            // "hbcur" is a composite category enabling all hbcur-related debug output
+            if (ptrCategory->count(string("hbcur"))) {
                 ptrCategory->insert(string("obfuscation"));
-                ptrCategory->insert(string("swiftx"));
+                ptrCategory->insert(string("swifttx"));
                 ptrCategory->insert(string("masternode"));
                 ptrCategory->insert(string("mnpayments"));
-                ptrCategory->insert(string("zero"));
                 ptrCategory->insert(string("mnbudget"));
             }
         }
@@ -295,21 +289,19 @@ int LogPrintStr(const std::string& str)
     return ret;
 }
 
-/** Interpret string as boolean, for argument parsing */
 static bool InterpretBool(const std::string& strValue)
 {
-    if (strValue.empty())
-        return true;
-    return (atoi(strValue) != 0);
+	if (strValue.empty())
+		return true;
+	return (atoi(strValue) != 0);
 }
 
-/** Turn -noX into -X=0 */
 static void InterpretNegativeSetting(std::string& strKey, std::string& strValue)
 {
-    if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o') {
-        strKey = "-" + strKey.substr(3);
-        strValue = InterpretBool(strValue) ? "0" : "1";
-    }
+	if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o') {
+		strKey = "-" + strKey.substr(3);
+		strValue = InterpretBool(strValue) ? "0" : "1";
+	}
 }
 
 void ParseParameters(int argc, const char* const argv[])
@@ -338,11 +330,12 @@ void ParseParameters(int argc, const char* const argv[])
         // If both --foo and -foo are set, the last takes effect.
         if (str.length() > 1 && str[1] == '-')
             str = str.substr(1);
-        InterpretNegativeSetting(str, strValue);
+	InterpretNegativeSetting(str, strValue);
 
         mapArgs[str] = strValue;
         mapMultiArgs[str].push_back(strValue);
     }
+
 }
 
 std::string GetArg(const std::string& strArg, const std::string& strDefault)
@@ -354,16 +347,16 @@ std::string GetArg(const std::string& strArg, const std::string& strDefault)
 
 int64_t GetArg(const std::string& strArg, int64_t nDefault)
 {
-    if (mapArgs.count(strArg))
-        return atoi64(mapArgs[strArg]);
-    return nDefault;
+	if (mapArgs.count(strArg))
+		return atoi64(mapArgs[strArg]);
+	return nDefault;
 }
 
 bool GetBoolArg(const std::string& strArg, bool fDefault)
 {
-    if (mapArgs.count(strArg))
-        return InterpretBool(mapArgs[strArg]);
-    return fDefault;
+	if (mapArgs.count(strArg))
+		return InterpretBool(mapArgs[strArg]);
+	return fDefault;
 }
 
 bool SoftSetArg(const std::string& strArg, const std::string& strValue)
@@ -403,7 +396,7 @@ static std::string FormatException(std::exception* pex, const char* pszThread)
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "hbcucoin";
+    const char* pszModule = "hbcur";
 #endif
     if (pex)
         return strprintf(
@@ -424,13 +417,13 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 boost::filesystem::path GetDefaultDataDir()
 {
     namespace fs = boost::filesystem;
-// Windows < Vista: C:\Documents and Settings\Username\Application Data\hbcucoin
-// Windows >= Vista: C:\Users\Username\AppData\Roaming\hbcucoin
-// Mac: ~/Library/Application Support/hbcucoin
-// Unix: ~/.hbcucoin
+// Windows < Vista: C:\Documents and Settings\Username\Application Data\hbcur
+// Windows >= Vista: C:\Users\Username\AppData\Roaming\hbcur
+// Mac: ~/Library/Application Support/hbcur
+// Unix: ~/.hbcur
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "hbcucoin";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "hbcur";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -442,10 +435,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectory(pathRet);
-    return pathRet / "hbcucoin";
+    return pathRet / "hbcur";
 #else
     // Unix
-    return pathRet / ".hbcucoin";
+    return pathRet / ".hbcur";
 #endif
 #endif
 }
@@ -492,7 +485,7 @@ void ClearDatadirCache()
 
 boost::filesystem::path GetConfigFile()
 {
-    boost::filesystem::path pathConfigFile(GetArg("-conf", "hbcucoin.conf"));
+    boost::filesystem::path pathConfigFile(GetArg("-conf", "hbcur.conf"));
     if (!pathConfigFile.is_complete())
         pathConfigFile = GetDataDir(false) / pathConfigFile;
 
@@ -511,7 +504,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 {
     boost::filesystem::ifstream streamConfig(GetConfigFile());
     if (!streamConfig.good()) {
-        // Create empty hbcucoin.conf if it does not exist
+        // Create empty hbcur.conf if it does not exist
         FILE* configFile = fopen(GetConfigFile().string().c_str(), "a");
         if (configFile != NULL)
             fclose(configFile);
@@ -522,13 +515,14 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     setOptions.insert("*");
 
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it) {
-        // Don't overwrite existing settings so command line settings override hbcucoin.conf
+        // Don't overwrite existing settings so command line settings override hbcur.conf
         string strKey = string("-") + it->string_key;
-        string strValue = it->value[0];
-        InterpretNegativeSetting(strKey, strValue);
-        if (mapSettingsRet.count(strKey) == 0)
-            mapSettingsRet[strKey] = strValue;
-        mapMultiSettingsRet[strKey].push_back(strValue);
+    	string strValue = it->value[0];
+	InterpretNegativeSetting(strKey, strValue);
+	if (mapSettingsRet.count(strKey) == 0)
+		mapSettingsRet[strKey] = strValue;
+	mapMultiSettingsRet[strKey].push_back(strValue);
+
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
@@ -537,7 +531,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 #ifndef WIN32
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "hbcucoind.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "hbcurd.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }
@@ -738,26 +732,6 @@ boost::filesystem::path GetTempPath()
 #endif
 }
 
-double double_safe_addition(double fValue, double fIncrement)
-{
-    double fLimit = std::numeric_limits<double>::max() - fValue;
-
-    if (fLimit > fIncrement)
-        return fValue + fIncrement;
-    else
-        return std::numeric_limits<double>::max();
-}
-
-double double_safe_multiplication(double fValue, double fmultiplicator)
-{
-    double fLimit = std::numeric_limits<double>::max() / fmultiplicator;
-
-    if (fLimit > fmultiplicator)
-        return fValue * fmultiplicator;
-    else
-        return std::numeric_limits<double>::max();
-}
-
 void runCommand(std::string strCommand)
 {
     int nErr = ::system(strCommand.c_str());
@@ -806,18 +780,6 @@ void SetupEnvironment()
     // boost::filesystem::path, which is then used to explicitly imbue the path.
     std::locale loc = boost::filesystem::path::imbue(std::locale::classic());
     boost::filesystem::path::imbue(loc);
-}
-
-bool SetupNetworking()
-{
-#ifdef WIN32
-    // Initialize Windows Sockets
-    WSADATA wsadata;
-    int ret = WSAStartup(MAKEWORD(2,2), &wsadata);
-    if (ret != NO_ERROR || LOBYTE(wsadata.wVersion ) != 2 || HIBYTE(wsadata.wVersion) != 2)
-        return false;
-#endif
-    return true;
 }
 
 void SetThreadPriority(int nPriority)

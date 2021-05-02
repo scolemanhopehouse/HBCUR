@@ -1,7 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +7,7 @@
 #define BITCOIN_COMPAT_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/hbcucoin-config.h"
+#include "config/hbcur-config.h"
 #endif
 
 #ifdef WIN32
@@ -74,13 +72,13 @@ typedef u_int SOCKET;
 #define MAX_PATH 1024
 #endif
 
-// As Solaris does not have the MSG_NOSIGNAL flag for send(2) syscall, it is defined as 0
+// As hbcur does not have the MSG_NOSIGNAL flag for send(2) syscall, it is defined as 0
 #if !defined(HAVE_MSG_NOSIGNAL) && !defined(MSG_NOSIGNAL)
 #define MSG_NOSIGNAL 0
 #endif
 
 #ifndef WIN32
-// PRIO_MAX is not defined on Solaris
+// PRIO_MAX is not defined on hbcur
 #ifndef PRIO_MAX
 #define PRIO_MAX 20
 #endif
@@ -90,9 +88,7 @@ typedef u_int SOCKET;
 #define THREAD_PRIORITY_ABOVE_NORMAL (-2)
 #endif
 
-#if HAVE_DECL_STRNLEN == 0
-size_t strnlen( const char *start, size_t max_len);
-#endif // HAVE_DECL_STRNLEN
+size_t strnlen_int(const char* start, size_t max_len);
 
 bool static inline IsSelectableSocket(SOCKET s)
 {

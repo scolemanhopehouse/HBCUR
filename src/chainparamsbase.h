@@ -1,6 +1,4 @@
 // Copyright (c) 2014 The Bitcoin developers
-// Copyright (c) 2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,8 +9,8 @@
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between hbcucoin-cli and hbcucoind)
- * of a given instance of the hbcucoin system.
+ * CBaseChainParams defines the base parameters (shared between hbcur-cli and hbcurd)
+ * of a given instance of the hbcur system.
  */
 class CBaseChainParams
 {

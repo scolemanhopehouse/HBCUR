@@ -1,0 +1,26 @@
+# /etc/conf.d/hbcurd: config file for /etc/init.d/hbcurd
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/hbcur/hbcur.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/hbcurd"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/hbcurd.pid"
+
+# Where to write hbcurd data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/hbcurd"
+
+# User and group to own hbcurd process
+#BITCOIND_USER="hbcur"
+#BITCOIND_GROUP="hbcur"
+
+# Path to hbcurd executable
+#BITCOIND_BIN="/usr/bin/hbcurd"
+
+# Nice value to run hbcurd under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+BITCOIND_OPTS=""

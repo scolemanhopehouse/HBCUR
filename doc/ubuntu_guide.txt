@@ -1,0 +1,131 @@
+Basic Masternode guide Linux
+
+first we will install Build dependencies:
+
+Build requirements:
+
+sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils git
+
+
+On at least Ubuntu 14.04+ and Debian 7+ there are generic names for the individual boost development packages, so the following can be used to only install necessary parts of boost:
+
+sudo apt-get install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev
+
+If that doesn't work, you can install all boost development packages with:
+
+sudo apt-get install libboost-all-dev
+
+BerkeleyDB is required for the wallet. db4.8 packages are available here. You can add the repository and install using the following commands:
+
+sudo add-apt-repository ppa:bitcoin/bitcoin
+sudo apt-get update
+sudo apt-get install libdb4.8-dev libdb4.8++-dev
+
+Optional:
+
+sudo apt-get install libminiupnpc-dev (see --with-miniupnpc and --enable-upnp-default)
+
+ZMQ dependencies:
+
+sudo apt-get install libzmq3-dev (provides ZMQ API 4.x)
+
+Now lets start:
+
+Download hbcur coin  github source:
+
+
+git clone https://github.com/hbcurcoin/hbcur.git
+
+Now we are going to compile the Client:
+
+chmod a+x+w -R hbcur/
+cd hbcur
+./autogen.sh
+./configure
+make
+make install
+
+Now lets run the hbcur daemon:
+
+hbcurd &
+press enter
+
+
+We need to create our masternode Private Key.
+
+hbcur-cli masternode genkey
+
+copy the generated code to a text file
+
+Now we need our hbcur address:
+
+hbcur-cli getaccountaddress 0
+
+copy the generated address to a text file
+
+Send 5000 hbcur to "address 0"
+
+go to hbcur.conf in
+
+./root/.hbcur/
+
+Paste this (dont forget to set rpcuser and password)
+
+
+rpcuser=<anything>
+
+rpcpassword=<anything>
+
+maxconnections=256
+
+masternode=1
+
+masternodeprivkey=XXXXXXXXXXXXXXXXXX (paste the key you generated with the command masternode genkey)
+
+masternodeaddr=xxx.xxx.xxx.xxx:25676
+
+
+close config file.
+
+Now open 
+
+in /root/.hbcur/
+
+masternode.conf
+
+
+# Format: alias IP:port masternodeprivkey collateral_output_txid collateral_output_index
+# Example: 
+Quote
+mn1 127.0.0.1:25676 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0
+
+set up your ip, masternode privkey, and TXID (of the 5000 HBCUR)
+
+
+now shutdown hbcurd process and restart it
+
+lets list all proccesses:
+
+ps ax
+
+find the proccess number
+
+
+kill (process number)
+
+now restart hbcurd
+
+and lets start it again:
+
+hbcurd &
+
+
+Now let check our masternode status:
+
+hbcur-cli masternode status
+
+it will display if your wallet is masternode capable. if it does, just use command:  
+
+masternode start
+
+wait 10 seconds and use the command : hbcur-cli masternode list  (it should display a list of masternodes, check that your masternode is on the list).

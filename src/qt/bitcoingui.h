@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The xx developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +6,7 @@
 #define BITCOIN_QT_BITCOINGUI_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/hbcucoin-config.h"
+#include "config/hbcur-config.h"
 #endif
 
 #include "amount.h"
@@ -84,9 +83,7 @@ private:
 
     UnitDisplayStatusBarControl* unitDisplayControl;
     QLabel* labelStakingIcon;
-    QPushButton* labelAutoMintIcon;
-    QPushButton* labelEncryptionIcon;
-    QLabel* labelTorIcon;
+    QLabel* labelEncryptionIcon;
     QPushButton* labelConnectionsIcon;
     QLabel* labelBlocksIcon;
     QLabel* progressBarLabel;
@@ -96,7 +93,7 @@ private:
     QMenuBar* appMenuBar;
     QAction* overviewAction;
     QAction* historyAction;
-//    QAction* masternodeAction;
+    QAction* masternodeAction;
     QAction* quitAction;
     QAction* sendCoinsAction;
     QAction* usedSendingAddressesAction;
@@ -109,7 +106,6 @@ private:
     QAction* multisigSignAction;
     QAction* aboutAction;
     QAction* receiveCoinsAction;
-    QAction* privacyAction;
     QAction* optionsAction;
     QAction* toggleHideAction;
     QAction* encryptWalletAction;
@@ -124,24 +120,12 @@ private:
     QAction* openPeersAction;
     QAction* openRepairAction;
     QAction* openConfEditorAction;
-    //QAction* openMNConfEditorAction;
+    QAction* openMNConfEditorAction;
     QAction* showBackupsAction;
     QAction* openAction;
     QAction* openBlockExplorerAction;
     QAction* showHelpMessageAction;
     QAction* multiSendAction;
-    
-    QAction* facebookAction;
-    QAction* twitterAction;
-    QAction* discordAction;
-    QAction* telegramAction;
-    QAction* youtubeAction;
-    QAction* redditAction;
-    QAction* exchangesAction;
-    QAction* hbcucoinBlockExplorerAction;
-    QAction* cmcAction;
-    QAction* githubAction;
-    QAction* webmainAction;
 
     QSystemTrayIcon* trayIcon;
     QMenu* trayIconMenu;
@@ -195,10 +179,9 @@ public slots:
     */
     void message(const QString& title, const QString& message, unsigned int style, bool* ret = NULL);
 
-#ifdef ENABLE_WALLET
     void setStakingStatus();
-//    void setAutoMintStatus();
 
+#ifdef ENABLE_WALLET
     /** Set the encryption status as shown in the UI.
        @param[in] status            current encryption status
        @see WalletModel::EncryptionStatus
@@ -207,26 +190,9 @@ public slots:
 
     bool handlePaymentRequest(const SendCoinsRecipient& recipient);
 
-  /** Links menu */
-    void webmainActionClicked();
-    void facebookActionClicked();
-    void twitterActionClicked();
-    void discordActionClicked();
-    void telegramActionClicked();
-    void youtubeActionClicked();
-    void redditActionClicked();
-    void exchangesActionClicked();
-    void hbcucoinBlockExplorerActionClicked();
-    void cmcActionClicked();
-    void githubActionClicked();
-    
     /** Show incoming transaction notification for new transactions. */
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address);
 #endif // ENABLE_WALLET
-
-private:
-    /** Set the Tor-enabled icon as shown in the UI. */
-    void updateTorIcon();
 
 private slots:
 #ifdef ENABLE_WALLET
@@ -237,11 +203,9 @@ private slots:
     /** Switch to Explorer Page */
     void gotoBlockExplorerPage();
     /** Switch to masternode page */
-//    void gotoMasternodePage();
-    /** Switch to privacy page */
-    void gotoReceiveCoinsPage();
+    void gotoMasternodePage();
     /** Switch to receive coins page */
-    void gotoPrivacyPage();
+    void gotoReceiveCoinsPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 
@@ -251,10 +215,12 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog */
     void gotoMultiSendDialog();
+
     /** Show MultiSig Dialog */
     void gotoMultisigCreate();
     void gotoMultisigSpend();
     void gotoMultisigSign();
+
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 

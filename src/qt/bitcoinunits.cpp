@@ -1,6 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The xx developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The hbcur developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,21 +17,21 @@ BitcoinUnits::BitcoinUnits(QObject* parent) : QAbstractListModel(parent),
 {
 }
 
-QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits() //disable the unit choice to avoid confusion
+QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits()
 {
     QList<BitcoinUnits::Unit> unitlist;
-    unitlist.append(hbcucoin);
-    //unitlist.append(mECA); 
-    //unitlist.append(uECA);
+    unitlist.append(HBCUR);
+    unitlist.append(mENZ);
+    unitlist.append(uENZ);
     return unitlist;
 }
 
 bool BitcoinUnits::valid(int unit)
 {
     switch (unit) {
-    case hbcucoin:
-    case mECA:
-    case uECA:
+    case HBCUR:
+    case mENZ:
+    case uENZ:
         return true;
     default:
         return false;
@@ -40,12 +41,12 @@ bool BitcoinUnits::valid(int unit)
 QString BitcoinUnits::id(int unit)
 {
     switch (unit) {
-    case hbcucoin:
-        return QString("HBCU");
-    case mECA:
-        return QString("mhbcucoin");
-    case uECA:
-        return QString::fromUtf8("uhbcucoin");
+    case HBCUR:
+        return QString("HBCUR");
+    case mENZ:
+        return QString("mHBCUR");
+    case uENZ:
+        return QString::fromUtf8("uHBCUR");
     default:
         return QString("???");
     }
@@ -55,23 +56,23 @@ QString BitcoinUnits::name(int unit)
 {
     if (Params().NetworkID() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case hbcucoin:
-            return QString("HBCU");
-        case mECA:
-            return QString("mECA");
-        case uECA:
-            return QString::fromUtf8("μECA");
+        case HBCUR:
+            return QString("HBCUR");
+        case mENZ:
+            return QString("mHBCUR");
+        case uENZ:
+            return QString::fromUtf8("μHBCUR");
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case hbcucoin:
-            return QString("tECA");
-        case mECA:
-            return QString("mtECA");
-        case uECA:
-            return QString::fromUtf8("μtECA");
+        case HBCUR:
+            return QString("tHBCUR");
+        case mENZ:
+            return QString("mtHBCUR");
+        case uENZ:
+            return QString::fromUtf8("μtHBCUR");
         default:
             return QString("???");
         }
@@ -82,23 +83,23 @@ QString BitcoinUnits::description(int unit)
 {
     if (Params().NetworkID() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case hbcucoin:
-            return QString("HBCU");
-        case mECA:
-            return QString("Milli-hbcucoin (1 / 1" THIN_SP_UTF8 "000)");
-        case uECA:
-            return QString("Micro-hbcucoin (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+        case HBCUR:
+            return QString("HBCUR");
+        case mENZ:
+            return QString("Milli-HBCUR (1 / 1" THIN_SP_UTF8 "000)");
+        case uENZ:
+            return QString("Micro-HBCUR (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case hbcucoin:
-            return QString("TestECAs");
-        case mECA:
-            return QString("Milli-TestECA (1 / 1" THIN_SP_UTF8 "000)");
-        case uECA:
-            return QString("Micro-TestECA (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+        case HBCUR:
+            return QString("TestHBCURs");
+        case mENZ:
+            return QString("Milli-TestHBCUR (1 / 1" THIN_SP_UTF8 "000)");
+        case uENZ:
+            return QString("Micro-TestHBCUR (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
@@ -108,11 +109,11 @@ QString BitcoinUnits::description(int unit)
 qint64 BitcoinUnits::factor(int unit)
 {
     switch (unit) {
-    case hbcucoin:
+    case HBCUR:
         return 100000000;
-    case mECA:
+    case mENZ:
         return 100000;
-    case uECA:
+    case uENZ:
         return 100;
     default:
         return 100000000;
@@ -122,11 +123,11 @@ qint64 BitcoinUnits::factor(int unit)
 int BitcoinUnits::decimals(int unit)
 {
     switch (unit) {
-    case hbcucoin:
+    case HBCUR:
         return 8;
-    case mECA:
+    case mENZ:
         return 5;
-    case uECA:
+    case uENZ:
         return 2;
     default:
         return 0;
@@ -282,5 +283,5 @@ QVariant BitcoinUnits::data(const QModelIndex& index, int role) const
 
 CAmount BitcoinUnits::maxMoney()
 {
-    return Params().MaxMoneyOut();
+    return Params().MaxMoneyOut(); 
 }

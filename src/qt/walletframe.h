@@ -1,12 +1,9 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2016-2018 The xx developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_WALLETFRAME_H
 #define BITCOIN_QT_WALLETFRAME_H
-
-#include "askpassphrasedialog.h"
 
 #include <QFrame>
 #include <QMap>
@@ -58,11 +55,9 @@ public slots:
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch to masternode page */
-//    void gotoMasternodePage();
+    void gotoMasternodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
-    /** Switch to privacy page */
-    void gotoPrivacyPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
     /** Switch to explorer page */
@@ -73,8 +68,10 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog **/
     void gotoMultiSendDialog();
-    /** show a multisig tab **/
+
+     /** show a multisig tab **/
     void gotoMultisigDialog(int index);
+
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 
@@ -85,12 +82,9 @@ public slots:
     /** Change encrypted wallet passphrase */
     void changePassphrase();
     /** Ask for passphrase to unlock wallet temporarily */
-    void unlockWallet(AskPassphraseDialog::Context context);
-    void unlockWallet(bool setContext);
+    void unlockWallet();
     /** Lock wallet */
     void lockWallet();
-    /** Toggle Wallet Lock State */
-    void toggleLockWallet();
 
     /** Show used sending addresses */
     void usedSendingAddresses();

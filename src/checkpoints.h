@@ -1,6 +1,4 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2017 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -29,7 +27,7 @@ struct CCheckpointData {
 };
 
 //! Returns true if block passes checkpoint checks
-bool CheckBlock(int nHeight, const uint256& hash, bool fMatchesCheckpoint = false);
+bool CheckBlock(int nHeight, const uint256& hash);
 
 //! Return conservative estimate of total number of blocks, 0 if unknown
 int GetTotalBlocksEstimate();

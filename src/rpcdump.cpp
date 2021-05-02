@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2018 The hbcucoin developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The hbcur developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -26,11 +26,12 @@
 #include <openssl/aes.h>
 #include <openssl/sha.h>
 
-#include <univalue.h>
+#include "json/json_spirit_value.h"
 
+using namespace json_spirit;
 using namespace std;
 
-void EnsureWalletIsUnlocked(bool fAllowAnonOnly);
+void EnsureWalletIsUnlocked();
 
 std::string static EncodeDumpTime(int64_t nTime)
 {
@@ -79,32 +80,23 @@ std::string DecodeDumpString(const std::string& str)
     return ret.str();
 }
 
-UniValue importprivkey(const UniValue& params, bool fHelp)
+Value importprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 3)
         throw runtime_error(
-            "importprivkey \"hbcucoinprivkey\" ( \"label\" rescan )\n"
-            "\nAdds a private key (as returned by dumpprivkey) to your wallet.\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "importprivkey \"hbcurprivkey\" ( \"label\" rescan )\n"
+            "\nAdds a private key (as returned by dumpprivkey) to your wallet.\n"
             "\nArguments:\n"
-            "1. \"hbcucoinprivkey\"   (string, required) The private key (see dumpprivkey)\n"
+            "1. \"hbcurprivkey\"   (string, required) The private key (see dumpprivkey)\n"
             "2. \"label\"            (string, optional, default=\"\") An optional label\n"
             "3. rescan               (boolean, optional, default=true) Rescan the wallet for transactions\n"
-
             "\nNote: This call can take minutes to complete if rescan is true.\n"
-
             "\nExamples:\n"
             "\nDump a private key\n" +
             HelpExampleCli("dumpprivkey", "\"myaddress\"") +
-            "\nImport the private key with rescan\n" +
-            HelpExampleCli("importprivkey", "\"mykey\"") +
-            "\nImport using a label and without rescan\n" +
-            HelpExampleCli("importprivkey", "\"mykey\" \"testing\" false") +
-            "\nAs a JSON-RPC call\n" +
-            HelpExampleRpc("importprivkey", "\"mykey\", \"testing\", false"));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+            "\nImport the private key with rescan\n" + HelpExampleCli("importprivkey", "\"mykey\"") +
+            "\nImport using a label and without rescan\n" + HelpExampleCli("importprivkey", "\"mykey\" \"testing\" false") +
+            "\nAs a JSON-RPC call\n" + HelpExampleRpc("importprivkey", "\"mykey\", \"testing\", false"));
 
     EnsureWalletIsUnlocked();
 
@@ -135,7 +127,7 @@ UniValue importprivkey(const UniValue& params, bool fHelp)
 
         // Don't throw error in case a key is already there
         if (pwalletMain->HaveKey(vchAddress))
-            return NullUniValue;
+            return Value::null;
 
         pwalletMain->mapKeyMetadata[vchAddress].nCreateTime = 1;
 
@@ -150,32 +142,25 @@ UniValue importprivkey(const UniValue& params, bool fHelp)
         }
     }
 
-    return NullUniValue;
+    return Value::null;
 }
 
-UniValue importaddress(const UniValue& params, bool fHelp)
+Value importaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 3)
         throw runtime_error(
             "importaddress \"address\" ( \"label\" rescan )\n"
             "\nAdds an address or script (in hex) that can be watched as if it were in your wallet but cannot be used to spend.\n"
-
             "\nArguments:\n"
             "1. \"address\"          (string, required) The address\n"
             "2. \"label\"            (string, optional, default=\"\") An optional label\n"
             "3. rescan               (boolean, optional, default=true) Rescan the wallet for transactions\n"
-
             "\nNote: This call can take minutes to complete if rescan is true.\n"
-
             "\nExamples:\n"
             "\nImport an address with rescan\n" +
             HelpExampleCli("importaddress", "\"myaddress\"") +
-            "\nImport using a label without rescan\n" +
-            HelpExampleCli("importaddress", "\"myaddress\" \"testing\" false") +
-            "\nAs a JSON-RPC call\n" +
-            HelpExampleRpc("importaddress", "\"myaddress\", \"testing\", false"));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+            "\nImport using a label without rescan\n" + HelpExampleCli("importaddress", "\"myaddress\" \"testing\" false") +
+            "\nAs a JSON-RPC call\n" + HelpExampleRpc("importaddress", "\"myaddress\", \"testing\", false"));
 
     CScript script;
 
@@ -186,7 +171,7 @@ UniValue importaddress(const UniValue& params, bool fHelp)
         std::vector<unsigned char> data(ParseHex(params[0].get_str()));
         script = CScript(data.begin(), data.end());
     } else {
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcucoin address or script");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcur address or script");
     }
 
     string strLabel = "";
@@ -208,7 +193,7 @@ UniValue importaddress(const UniValue& params, bool fHelp)
 
         // Don't throw error in case an address is already there
         if (pwalletMain->HaveWatchOnly(script))
-            return NullUniValue;
+            return Value::null;
 
         pwalletMain->MarkDirty();
 
@@ -221,29 +206,22 @@ UniValue importaddress(const UniValue& params, bool fHelp)
         }
     }
 
-    return NullUniValue;
+    return Value::null;
 }
 
-UniValue importwallet(const UniValue& params, bool fHelp)
+Value importwallet(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
             "importwallet \"filename\"\n"
-            "\nImports keys from a wallet dump file (see dumpwallet).\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "\nImports keys from a wallet dump file (see dumpwallet).\n"
             "\nArguments:\n"
             "1. \"filename\"    (string, required) The wallet file\n"
-
             "\nExamples:\n"
             "\nDump the wallet\n" +
             HelpExampleCli("dumpwallet", "\"test\"") +
-            "\nImport the wallet\n" +
-            HelpExampleCli("importwallet", "\"test\"") +
-            "\nImport using the json rpc call\n" +
-            HelpExampleRpc("importwallet", "\"test\""));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+            "\nImport the wallet\n" + HelpExampleCli("importwallet", "\"test\"") +
+            "\nImport using the json rpc call\n" + HelpExampleRpc("importwallet", "\"test\""));
 
     EnsureWalletIsUnlocked();
 
@@ -324,35 +302,29 @@ UniValue importwallet(const UniValue& params, bool fHelp)
     if (!fGood)
         throw JSONRPCError(RPC_WALLET_ERROR, "Error adding some keys to wallet");
 
-    return NullUniValue;
+    return Value::null;
 }
 
-UniValue dumpprivkey(const UniValue& params, bool fHelp)
+Value dumpprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey \"hbcucoinaddress\"\n"
-            "\nReveals the private key corresponding to 'hbcucoinaddress'.\n"
-            "Then the importprivkey can be used with this output\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "dumpprivkey \"hbcuraddress\"\n"
+            "\nReveals the private key corresponding to 'hbcuraddress'.\n"
+            "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"hbcucoinaddress\"   (string, required) The hbcucoin address for the private key\n"
-
+            "1. \"hbcuraddress\"   (string, required) The hbcur address for the private key\n"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
-
             "\nExamples:\n" +
             HelpExampleCli("dumpprivkey", "\"myaddress\"") + HelpExampleCli("importprivkey", "\"mykey\"") + HelpExampleRpc("dumpprivkey", "\"myaddress\""));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
 
     EnsureWalletIsUnlocked();
 
     string strAddress = params[0].get_str();
     CBitcoinAddress address;
     if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcucoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcur address");
     CKeyID keyID;
     if (!address.GetKeyID(keyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");
@@ -363,21 +335,16 @@ UniValue dumpprivkey(const UniValue& params, bool fHelp)
 }
 
 
-UniValue dumpwallet(const UniValue& params, bool fHelp)
+Value dumpwallet(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
             "dumpwallet \"filename\"\n"
-            "\nDumps all wallet keys in a human-readable format.\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "\nDumps all wallet keys in a human-readable format.\n"
             "\nArguments:\n"
             "1. \"filename\"    (string, required) The filename\n"
-
             "\nExamples:\n" +
             HelpExampleCli("dumpwallet", "\"test\"") + HelpExampleRpc("dumpwallet", "\"test\""));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
 
     EnsureWalletIsUnlocked();
 
@@ -400,7 +367,7 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
     std::sort(vKeyBirth.begin(), vKeyBirth.end());
 
     // produce output
-    file << strprintf("# Wallet dump created by hbcucoin %s (%s)\n", CLIENT_BUILD, CLIENT_DATE);
+    file << strprintf("# Wallet dump created by hbcur %s (%s)\n", CLIENT_BUILD, CLIENT_DATE);
     file << strprintf("# * Created on %s\n", EncodeDumpTime(GetTime()));
     file << strprintf("# * Best block at time of backup was %i (%s),\n", chainActive.Height(), chainActive.Tip()->GetBlockHash().ToString());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(chainActive.Tip()->GetBlockTime()));
@@ -423,29 +390,21 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
     file << "\n";
     file << "# End of dump\n";
     file.close();
-    return NullUniValue;
+    return Value::null;
 }
 
-UniValue bip38encrypt(const UniValue& params, bool fHelp)
+Value bip38encrypt(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "bip38encrypt \"hbcucoinaddress\" \"passphrase\"\n"
-            "\nEncrypts a private key corresponding to 'hbcucoinaddress'.\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "bip38encrypt \"hbcuraddress\"\n"
+            "\nEncrypts a private key corresponding to 'hbcuraddress'.\n"
             "\nArguments:\n"
-            "1. \"hbcucoinaddress\"   (string, required) The hbcucoin address for the private key (you must hold the key already)\n"
+            "1. \"hbcuraddress\"   (string, required) The hbcur address for the private key (you must hold the key already)\n"
             "2. \"passphrase\"   (string, required) The passphrase you want the private key to be encrypted with - Valid special chars: !#$%&'()*+,-./:;<=>?`{|}~ \n"
-
             "\nResult:\n"
             "\"key\"                (string) The encrypted private key\n"
-
-            "\nExamples:\n" +
-            HelpExampleCli("bip38encrypt", "\"DMJRSsuU9zfyrvxVaAEFQqK4MxZg6vgeS6\" \"mypasphrase\"") +
-            HelpExampleRpc("bip38encrypt", "\"DMJRSsuU9zfyrvxVaAEFQqK4MxZg6vgeS6\" \"mypasphrase\""));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+            "\nExamples:\n");
 
     EnsureWalletIsUnlocked();
 
@@ -454,7 +413,7 @@ UniValue bip38encrypt(const UniValue& params, bool fHelp)
 
     CBitcoinAddress address;
     if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcucoin address");
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid hbcur address");
     CKeyID keyID;
     if (!address.GetKeyID(keyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");
@@ -463,48 +422,41 @@ UniValue bip38encrypt(const UniValue& params, bool fHelp)
         throw JSONRPCError(RPC_WALLET_ERROR, "Private key for address " + strAddress + " is not known");
 
     uint256 privKey = vchSecret.GetPrivKey_256();
-    string encryptedOut = BIP38_Encrypt(strAddress, strPassphrase, privKey, vchSecret.IsCompressed());
+    string encryptedOut = BIP38_Encrypt(strAddress, strPassphrase, privKey);
 
-    UniValue result(UniValue::VOBJ);
+    Object result;
     result.push_back(Pair("Addess", strAddress));
     result.push_back(Pair("Encrypted Key", encryptedOut));
 
     return result;
 }
 
-UniValue bip38decrypt(const UniValue& params, bool fHelp)
+Value bip38decrypt(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 2)
         throw runtime_error(
-            "bip38decrypt \"hbcucoinaddress\" \"passphrase\"\n"
-            "\nDecrypts and then imports password protected private key.\n" +
-            HelpRequiringPassphrase() + "\n"
-
+            "bip38decrypt \"hbcuraddress\"\n"
+            "\nDecrypts and then imports password protected private key.\n"
             "\nArguments:\n"
-            "1. \"encryptedkey\"   (string, required) The encrypted private key\n"
-            "2. \"passphrase\"   (string, required) The passphrase you want the private key to be encrypted with\n"
+            "1. \"passphrase\"   (string, required) The passphrase you want the private key to be encrypted with\n"
+            "2. \"encryptedkey\"   (string, required) The encrypted private key\n"
 
             "\nResult:\n"
             "\"key\"                (string) The decrypted private key\n"
-
-            "\nExamples:\n" +
-            HelpExampleCli("bip38decrypt", "\"encryptedkey\" \"mypassphrase\"") +
-            HelpExampleRpc("bip38decrypt", "\"encryptedkey\" \"mypassphrase\""));
-
-    LOCK2(cs_main, pwalletMain->cs_wallet);
+            "\nExamples:\n");
 
     EnsureWalletIsUnlocked();
 
     /** Collect private key and passphrase **/
-    string strKey = params[0].get_str();
-    string strPassphrase = params[1].get_str();
+    string strPassphrase = params[0].get_str();
+    string strKey = params[1].get_str();
 
     uint256 privKey;
     bool fCompressed;
     if (!BIP38_Decrypt(strPassphrase, strKey, privKey, fCompressed))
         throw JSONRPCError(RPC_WALLET_ERROR, "Failed To Decrypt");
 
-    UniValue result(UniValue::VOBJ);
+    Object result;
     result.push_back(Pair("privatekey", HexStr(privKey)));
 
     CKey key;

@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/translations">
+        <file alias="bg">locale/hbcur_bg.qm</file>
+        <file alias="ca">locale/hbcur_ca.qm</file>
+        <file alias="cs">locale/hbcur_cs.qm</file>
+        <file alias="da">locale/hbcur_da.qm</file>
+        <file alias="de">locale/hbcur_de.qm</file>
+        <file alias="en">locale/hbcur_en.qm</file>
+        <file alias="en_US">locale/hbcur_en_US.qm</file>
+        <file alias="es">locale/hbcur_es.qm</file>
+        <file alias="fi">locale/hbcur_fi.qm</file>
+        <file alias="fr_FR">locale/hbcur_fr_FR.qm</file>
+        <file alias="it">locale/hbcur_it.qm</file>
+        <file alias="ja">locale/hbcur_ja.qm</file>
+        <file alias="ko_KR">locale/hbcur_ko_KR.qm</file>
+        <file alias="nl">locale/hbcur_nl.qm</file>
+        <file alias="pl">locale/hbcur_pl.qm</file>
+        <file alias="pt">locale/hbcur_pt.qm</file>
+        <file alias="pt_BR">locale/hbcur_pt_BR.qm</file>
+        <file alias="ro_RO">locale/hbcur_ro_RO.qm</file>
+        <file alias="ru">locale/hbcur_ru.qm</file>
+        <file alias="sk">locale/hbcur_sk.qm</file>
+        <file alias="sv">locale/hbcur_sv.qm</file>
+        <file alias="uk">locale/hbcur_uk.qm</file>
+        <file alias="zh_CN">locale/hbcur_zh_CN.qm</file>
+        <file alias="zh_TW">locale/hbcur_zh_TW.qm</file>
+    </qresource>
+</RCC>

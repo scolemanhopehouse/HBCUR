@@ -1,44 +1,65 @@
-hbcucoin
+hbcur Core
 =====================
 
 Setup
 ---------------------
-[hbcucoin](https://www.hbcucoinproject.org/hbcucoin-wallets/) is the original hbcucoin client and it builds the backbone of the network. However, it downloads and stores the entire history of hbcucoin transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from one to two hours. Thankfully you only have to do this once.
+[hbcur Core](https://hbcur.io/) is the original hbcur client and it builds the backbone of the network. However, it downloads and stores the entire history of hbcur transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
 
 Running
 ---------------------
-The following are some helpful notes on how to run hbcucoin on your native platform.
+The following are some helpful notes on how to run hbcur on your native platform.
 
 ### Unix
 
-Unpack the files into a directory and run in terminal:
+Unpack the files into a directory and run:
 
-- ./hbcucoin-qt (GUI, 32-bit) or ./hbcucoind (headless, 32-bit)
-- ./hbcucoin-qt (GUI, 64-bit) or ./hbcucoind (headless, 64-bit)
+- bin/32/hbcur-qt (GUI, 32-bit) or bin/32/hbcurd (headless, 32-bit)
+- bin/64/hbcur-qt (GUI, 64-bit) or bin/64/hbcurd (headless, 64-bit)
 
 ### Windows
 
-Run the installer, and then run hbcucoin-qt.exe.
+Unpack the files into a directory, and then run hbcur-qt.exe.
 
 ### OSX
 
-Drag hbcucoin-Qt to your applications folder, and then run hbcucoin-Qt.
+Drag hbcur-Qt to your applications folder, and then run hbcur-Qt.
 
 ### Need Help?
 
-* See the documentation at the [Bitcoin Wiki](https://en.bitcoin.it/wiki/Main_Page) ***TODO***
+* See the documentation at the [hbcur Wiki](https://github.com/hbcur-crypto/hbcur/wiki)
 for help and more information.
-* Ask for help on our [Website](https://www.hbcucoinproject.org/help-support/) or on help-support channel in [Discord](http://discordapp.com/invite/B8F7Jdv).
-* Join our Discord server [Discord Server](http://discordapp.com/invite/B8F7Jdv)
-* Join our Telegram group [Telegram](http://t.me/hbcucoincoin )
+* Ask for help on [BitcoinTalk](FIXME Add official BCT URL on ANN) or on the [hbcur Discord](https://discord.gg/a7vhegP).
+
+Building
+---------------------
+The following are developer notes on how to build hbcur on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+
+- [OSX Build Notes](build-osx.md)
+- [Unix Build Notes](build-unix.md)
+- [Gitian Building Guide](gitian-building.md)
+
+Development
+---------------------
+The hbcur repo's [root README](https://github.com/hbcur-crypto/hbcur/blob/master/README.md) contains relevant information on the development process and automated testing.
+
+- [Developer Notes](developer-notes.md)
+- [Multiwallet Qt Development](multiwallet-qt.md)
+- [Release Notes](release-notes.md)
+- [Release Process](release-process.md)
+- [Source Code Documentation (External Link)](https://dev.visucore.com/bitcoin/doxygen/) ***TODO***
+- [Translation Process](translation_process.md)
+- [Unit Tests](unit-tests.md)
+- [Unauthenticated REST Interface](REST-interface.md)
+- [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
 
-* Discuss on the [BitcoinTalk](https://bitcointalk.org/index.php?topic=1848351.0)
+* Discuss on the [BitcoinTalk](FIXME with URL after ANN) or the [hbcur Subreddit](http://reddit.com/r/hbcurcoin).
 
 ### Miscellaneous
-
+- [Assets Attribution](assets-attribution.md)
 - [Files](files.md)
+- [Tor Support](tor.md)
 - [Init Scripts (systemd/upstart/openrc)](init.md)
 
 License

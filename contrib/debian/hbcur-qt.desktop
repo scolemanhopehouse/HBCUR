@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=hbcur
+Comment=hbcur P2P Cryptocurrency
+Comment[fr]=hbcur, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=hbcur, eşten eşe kriptografik sanal para birimi
+Exec=hbcur-qt %u
+Terminal=false
+Type=Application
+Icon=hbcur128
+MimeType=x-scheme-handler/hbcur;
+Categories=Office;Finance;

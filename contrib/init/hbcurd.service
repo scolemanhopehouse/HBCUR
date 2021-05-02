@@ -1,0 +1,26 @@
+[Unit]
+Description=hbcur's distributed currency daemon
+After=network.target
+
+[Service]
+User=hbcur
+Group=hbcur
+
+Type=forking
+PIDFile=/var/lib/hbcurd/hbcurd.pid
+
+ExecStart=/usr/bin/hbcurd -daemon -pid=/var/lib/hbcurd/hbcurd.pid \
+          -conf=/etc/hbcur/hbcur.conf -datadir=/var/lib/hbcurd
+
+ExecStop=-/usr/bin/hbcur-cli -conf=/etc/hbcur/hbcur.conf \
+         -datadir=/var/lib/hbcurd stop
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

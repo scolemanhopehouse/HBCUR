@@ -1,0 +1,26 @@
+# /etc/conf.d/hbcucoind: config file for /etc/init.d/hbcucoind
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/hbcucoin/hbcucoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/hbcucoind"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/hbcucoind.pid"
+
+# Where to write hbcucoind data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/hbcucoind"
+
+# User and group to own hbcucoind process
+#BITCOIND_USER="hbcucoin"
+#BITCOIND_GROUP="hbcucoin"
+
+# Path to hbcucoind executable
+#BITCOIND_BIN="/usr/bin/hbcucoind"
+
+# Nice value to run hbcucoind under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+BITCOIND_OPTS=""

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=hbcucoin
+Comment=hbcucoin P2P Cryptocurrency
+Comment[fr]=hbcucoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=hbcucoin, eşten eşe kriptografik sanal para birimi
+Exec=hbcucoin-qt %u
+Terminal=false
+Type=Application
+Icon=bitcoin128
+MimeType=x-scheme-handler/hbcucoin;
+Categories=Office;Finance;
